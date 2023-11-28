@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol FirstScreenCoordinatorProtocol: AnyObject {
-    func pushSecondVC()
+    func pushSecondVC(deleteDetegate: DeleteDelegate)
     func popToRootVC()
 }
 
@@ -35,9 +35,9 @@ final class FirstScreenCoordinator {
         return navigationController
     }
 
-    private func createSecondVC() -> UIViewController {
-        let viewModel = SecondViewModel(coordinator: self, delDelegate: DeleteDelegate)
-        let vc = Seco
+    private func createSecondVC(deleteDetegate: DeleteDelegate) -> UIViewController {
+        let viewModel = SecondViewModel(coordinator: self, delDelegate: deleteDetegate)
+        let vc = SecondVC(viewModel: viewModel)
         return vc
     }
 
@@ -52,8 +52,9 @@ extension FirstScreenCoordinator: CoordinatorProtocol {
 }
 
 extension FirstScreenCoordinator: FirstScreenCoordinatorProtocol {
-    func pushSecondVC() {
-        let secondVC = createSecondVC()
+    func pushSecondVC(deleteDetegate: DeleteDelegate) {
+        let secondVC = createSecondVC(deleteDetegate: deleteDetegate)
+        navigationController.pushViewController(secondVC, animated: true)
         
     }
 

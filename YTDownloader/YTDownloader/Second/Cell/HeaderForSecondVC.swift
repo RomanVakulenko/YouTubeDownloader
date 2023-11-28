@@ -14,8 +14,9 @@ final class HeaderForSecondVC: UICollectionReusableView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = .red
         label.text = "You Down"
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 19)
+        label.textAlignment = .center
         label.textColor = .black
         return label
     }()
@@ -23,6 +24,9 @@ final class HeaderForSecondVC: UICollectionReusableView {
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .red
+        addSubview(titleLabel)
+        titleLabel.frame = bounds
     }
 
     required init?(coder: NSCoder) {

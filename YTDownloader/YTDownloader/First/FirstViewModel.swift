@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol NetworkAPIProtocol: AnyObject {
-    func downloadVideo() async throws -> VideoForUI
+    func downloadVideo()
 }
 
 
@@ -25,7 +25,7 @@ final class FirstViewModel {
         case none
         case processing
         case loading
-        case loadedAndSaved //??надо ли делать еще 1 для запроа доступа к ФОТО на 1ый раз - или это в самом методе проверим
+        case loadedAndSaved //??надо ли делать еще 1 для запроcа доступа к ФОТО на 1ый раз - или это в самом методе проверим
         case badURL(alertText: String)
         case deleted
         case pasted
@@ -48,12 +48,18 @@ final class FirstViewModel {
         self.coordinator = coordinator
     }
 
+    // MARK: - Public methods
+    func showSecondVC() {
+        coordinator?.pushSecondVC(deleteDetegate: self)
+    }
+
 }
+
 
 // MARK: - FirstVCViewModelProtocol
 extension FirstViewModel: NetworkAPIProtocol {
     @MainActor
-    func downloadVideo() async throws -> videoForUI { //??возможно надо разъединить загрузку и сохранение
+    func downloadVideo() { //??возможно надо разъединить загрузку и сохранение
         state = .loading //после того как нажали на downloadButton
 
         Task {
@@ -68,6 +74,13 @@ extension FirstViewModel: NetworkAPIProtocol {
 
             }
         }
+
+    }
+}
+
+extension FirstViewModel: DeleteDelegate {
+    func organizeAlertAfterDeletion() {
+        
     }
 
 
