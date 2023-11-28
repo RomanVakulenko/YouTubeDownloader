@@ -11,12 +11,15 @@ protocol NetworkRouterProtocol {
     func requestDataWith(_ url: URL) async throws -> Data
 }
 
+
 final class NetworkRouter {
 
 }
 
+
 // MARK: - Extensions
 extension NetworkRouter: NetworkRouterProtocol {
+
     func requestDataWith(_ url: URL) async throws -> Data {
         do {
             let configuration = URLSessionConfiguration.default
@@ -26,7 +29,7 @@ extension NetworkRouter: NetworkRouterProtocol {
 
             let (data, response) = try await session.data(from: url)
             if let httpResponse = response as? HTTPURLResponse {
-                let statusCode = httpResponse.statusCode
+                let statusCode = httpResponse.statusCode //ставил 500, но ??не выдает??
                 if statusCode < 200 && statusCode > 299 {
                     throw RouterErrors.serverErrorWith(statusCode) // URLError.badServerResponse - //The URL Loading System received bad data from the server.
                 }
@@ -46,7 +49,6 @@ extension NetworkRouter: NetworkRouterProtocol {
             print(error.code) // после разговора убрать (не попал в кейсы - принтит)
             print("Это принтит, когда в часть url'a (в path) добавляю тире --/v2/prices/latest")// после разговора убрать (не попала в кейсы - принтит)
             throw error
-
         }
 
     }
