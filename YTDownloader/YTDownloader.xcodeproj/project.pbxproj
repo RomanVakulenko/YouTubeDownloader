@@ -25,6 +25,8 @@
 		AD7C7C7A2B14CA2200C8A8CE /* UIView + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */; };
 		AD7C7C7C2B14F3CF00C8A8CE /* Print + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */; };
 		AD7C7C7F2B15C86A00C8A8CE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */; };
+		ADBA6E162B187BDD006A23EB /* String + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBA6E152B187BDD006A23EB /* String + extension.swift */; };
+		ADBA6E192B188CA4006A23EB /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */; };
 		ADBCBBF42B1621820070EDC0 /* NetworkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */; };
 		ADBCBBF62B16244D0070EDC0 /* RouterErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */; };
 		ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF72B162E380070EDC0 /* Mapper.swift */; };
@@ -54,6 +56,7 @@
 		AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView + extension.swift"; sourceTree = "<group>"; };
 		AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Print + extension.swift"; sourceTree = "<group>"; };
 		AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		ADBA6E152B187BDD006A23EB /* String + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + extension.swift"; sourceTree = "<group>"; };
 		ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRouter.swift; sourceTree = "<group>"; };
 		ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterErrors.swift; sourceTree = "<group>"; };
 		ADBCBBF72B162E380070EDC0 /* Mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mapper.swift; sourceTree = "<group>"; };
@@ -67,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADBA6E192B188CA4006A23EB /* XCDYouTubeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +171,7 @@
 		AD7C7C7D2B14F3D700C8A8CE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				ADBA6E152B187BDD006A23EB /* String + extension.swift */,
 				AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */,
 				AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */,
 			);
@@ -209,6 +214,9 @@
 			dependencies = (
 			);
 			name = YTDownloader;
+			packageProductDependencies = (
+				ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */,
+			);
 			productName = YTDownloader;
 			productReference = AD7C7C442B13148500C8A8CE /* YTDownloader.app */;
 			productType = "com.apple.product-type.application";
@@ -237,6 +245,9 @@
 				Base,
 			);
 			mainGroup = AD7C7C3B2B13148500C8A8CE;
+			packageReferences = (
+				ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
+			);
 			productRefGroup = AD7C7C452B13148500C8A8CE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -264,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD7C7C602B1320F500C8A8CE /* FirstScreenCoordinator.swift in Sources */,
+				ADBA6E162B187BDD006A23EB /* String + extension.swift in Sources */,
 				ADBCBC002B163AD20070EDC0 /* NetworkManagerErrors.swift in Sources */,
 				AD7C7C482B13148500C8A8CE /* AppDelegate.swift in Sources */,
 				AD7C7C622B13221700C8A8CE /* FirstVC.swift in Sources */,
@@ -426,7 +438,6 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -453,7 +464,6 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -492,6 +502,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/0xced/XCDYouTubeKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */;
+			productName = XCDYouTubeKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AD7C7C3C2B13148500C8A8CE /* Project object */;
 }

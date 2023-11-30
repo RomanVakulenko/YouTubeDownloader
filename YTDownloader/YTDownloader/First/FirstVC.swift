@@ -49,6 +49,8 @@ final class FirstVC: UIViewController {
         return textField
     }()
 
+    private var videoIDFromEnteredURL = String()
+
     private lazy var downloadButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -128,27 +130,28 @@ final class FirstVC: UIViewController {
         viewModel.closureChangingState = { [weak self] state in
             guard let strongSelf = self else {return}
 
-//            switch state {
-//            case .none:
-//                <#code#>
-//            case .processing:
-//                <#code#>
-//            case .loading:
-//                <#code#>
-//            case .loadedAndSaved:
-//                <#code#>
-//            case .badURL(alertText: let alertText):
-//                <#code#>
-//            case .deleted:
-//                <#code#>
-//            case .pasted:
-//                <#code#>
-//            }
+            switch state {
+            case .none:
+                <#code#>
+            case .processing:
+                <#code#>
+            case .loading:
+                <#code#>
+            case .loadedAndSaved:
+                <#code#>
+            case .badURL(alertText: let alertText):
+                <#code#>
+            case .deleted:
+                <#code#>
+            case .pasted:
+                <#code#>
+            }
         }
     }
 
     @objc private func download(_ sender: UIButton) {
-        viewModel.downloadVideo()
+        let videoID = videoIDFromEnteredURL
+        viewModel.downloadVideo(at: videoID)
     }
 
 
@@ -156,4 +159,12 @@ final class FirstVC: UIViewController {
         viewModel.showSecondVC()
     }
 
+}
+
+
+// MARK: - Extensions UITextFieldDelegate
+extension FirstVC: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        videoIDFromEnteredURL = textField.text?.extractYoutubeId() ?? ""
+    }
 }

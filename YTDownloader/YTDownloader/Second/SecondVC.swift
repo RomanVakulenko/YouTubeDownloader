@@ -45,10 +45,16 @@ final class SecondVC: UIViewController {
         super.viewDidLoad()
         setupView()
         layout()
+        
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+//        playlistManager.audioPlayer.pause() ??остановить воспроизведение
     }
 
     // MARK: - Private methods
