@@ -25,8 +25,14 @@
 		AD7C7C7A2B14CA2200C8A8CE /* UIView + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */; };
 		AD7C7C7C2B14F3CF00C8A8CE /* Print + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */; };
 		AD7C7C7F2B15C86A00C8A8CE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */; };
+		ADBA6E162B187BDD006A23EB /* String + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBA6E152B187BDD006A23EB /* String + extension.swift */; };
+		ADBA6E192B188CA4006A23EB /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */; };
 		ADBCBBF42B1621820070EDC0 /* NetworkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */; };
 		ADBCBBF62B16244D0070EDC0 /* RouterErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */; };
+		ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF72B162E380070EDC0 /* Mapper.swift */; };
+		ADBCBBFA2B1631700070EDC0 /* MapperError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF92B1631700070EDC0 /* MapperError.swift */; };
+		ADBCBBFE2B1633920070EDC0 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBFD2B1633920070EDC0 /* NetworkManager.swift */; };
+		ADBCBC002B163AD20070EDC0 /* NetworkManagerErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBFF2B163AD20070EDC0 /* NetworkManagerErrors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +56,13 @@
 		AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView + extension.swift"; sourceTree = "<group>"; };
 		AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Print + extension.swift"; sourceTree = "<group>"; };
 		AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		ADBA6E152B187BDD006A23EB /* String + extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + extension.swift"; sourceTree = "<group>"; };
 		ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRouter.swift; sourceTree = "<group>"; };
 		ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterErrors.swift; sourceTree = "<group>"; };
+		ADBCBBF72B162E380070EDC0 /* Mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mapper.swift; sourceTree = "<group>"; };
+		ADBCBBF92B1631700070EDC0 /* MapperError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperError.swift; sourceTree = "<group>"; };
+		ADBCBBFD2B1633920070EDC0 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		ADBCBBFF2B163AD20070EDC0 /* NetworkManagerErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerErrors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADBA6E192B188CA4006A23EB /* XCDYouTubeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +103,7 @@
 				AD7C7C6F2B14A71500C8A8CE /* Second */,
 				AD7C7C7D2B14F3D700C8A8CE /* Extensions */,
 				AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */,
+				ADBCBBFB2B1633370070EDC0 /* Business Layer */,
 				ADBCBBF22B1621410070EDC0 /* Core networkLayer */,
 				AD7C7C502B13148600C8A8CE /* Assets.xcassets */,
 				AD7C7C522B13148600C8A8CE /* LaunchScreen.storyboard */,
@@ -158,6 +171,7 @@
 		AD7C7C7D2B14F3D700C8A8CE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				ADBA6E152B187BDD006A23EB /* String + extension.swift */,
 				AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */,
 				AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */,
 			);
@@ -169,8 +183,19 @@
 			children = (
 				ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */,
 				ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */,
+				ADBCBBF72B162E380070EDC0 /* Mapper.swift */,
+				ADBCBBF92B1631700070EDC0 /* MapperError.swift */,
 			);
 			path = "Core networkLayer";
+			sourceTree = "<group>";
+		};
+		ADBCBBFB2B1633370070EDC0 /* Business Layer */ = {
+			isa = PBXGroup;
+			children = (
+				ADBCBBFD2B1633920070EDC0 /* NetworkManager.swift */,
+				ADBCBBFF2B163AD20070EDC0 /* NetworkManagerErrors.swift */,
+			);
+			path = "Business Layer";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -189,6 +214,9 @@
 			dependencies = (
 			);
 			name = YTDownloader;
+			packageProductDependencies = (
+				ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */,
+			);
 			productName = YTDownloader;
 			productReference = AD7C7C442B13148500C8A8CE /* YTDownloader.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +245,9 @@
 				Base,
 			);
 			mainGroup = AD7C7C3B2B13148500C8A8CE;
+			packageReferences = (
+				ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
+			);
 			productRefGroup = AD7C7C452B13148500C8A8CE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -244,8 +275,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD7C7C602B1320F500C8A8CE /* FirstScreenCoordinator.swift in Sources */,
+				ADBA6E162B187BDD006A23EB /* String + extension.swift in Sources */,
+				ADBCBC002B163AD20070EDC0 /* NetworkManagerErrors.swift in Sources */,
 				AD7C7C482B13148500C8A8CE /* AppDelegate.swift in Sources */,
 				AD7C7C622B13221700C8A8CE /* FirstVC.swift in Sources */,
+				ADBCBBFE2B1633920070EDC0 /* NetworkManager.swift in Sources */,
 				AD7C7C6C2B14833500C8A8CE /* SecondViewModel.swift in Sources */,
 				AD7C7C7A2B14CA2200C8A8CE /* UIView + extension.swift in Sources */,
 				AD7C7C752B14C55800C8A8CE /* CellForSecondVC.swift in Sources */,
@@ -254,6 +288,7 @@
 				AD7C7C5E2B131D2200C8A8CE /* MainCoordinator.swift in Sources */,
 				AD7C7C6A2B147DB600C8A8CE /* SecondVC.swift in Sources */,
 				AD7C7C662B14744D00C8A8CE /* VideoForUI.swift in Sources */,
+				ADBCBBFA2B1631700070EDC0 /* MapperError.swift in Sources */,
 				ADBCBBF62B16244D0070EDC0 /* RouterErrors.swift in Sources */,
 				AD7C7C7C2B14F3CF00C8A8CE /* Print + extension.swift in Sources */,
 				AD7C7C642B1322BA00C8A8CE /* FirstViewModel.swift in Sources */,
@@ -261,6 +296,7 @@
 				ADBCBBF42B1621820070EDC0 /* NetworkRouter.swift in Sources */,
 				AD7C7C782B14C6FB00C8A8CE /* HeaderForSecondVC.swift in Sources */,
 				AD7C7C682B1474AF00C8A8CE /* YTVideoDecoded.swift in Sources */,
+				ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,7 +438,6 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -429,7 +464,6 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -468,6 +502,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/0xced/XCDYouTubeKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ADBA6E182B188CA4006A23EB /* XCDYouTubeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADBA6E172B188CA4006A23EB /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */;
+			productName = XCDYouTubeKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AD7C7C3C2B13148500C8A8CE /* Project object */;
 }

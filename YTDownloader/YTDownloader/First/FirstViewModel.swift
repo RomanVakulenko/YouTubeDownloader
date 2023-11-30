@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol NetworkAPIProtocol: AnyObject {
-    func downloadVideo()
+    func downloadVideo(at videoID: String)
 }
 
 
@@ -59,8 +59,8 @@ final class FirstViewModel {
 // MARK: - FirstVCViewModelProtocol
 extension FirstViewModel: NetworkAPIProtocol {
     @MainActor
-    func downloadVideo() { //??возможно надо разъединить загрузку и сохранение
-        state = .loading //после того как нажали на downloadButton
+    func downloadVideo(at videoID: String) { //??возможно надо разъединить загрузку и сохранение
+        state = .processing //после того как нажали на downloadButton
 
         Task {
             do {
