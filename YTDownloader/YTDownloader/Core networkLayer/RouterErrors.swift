@@ -9,6 +9,9 @@ import Foundation
 
 enum RouterErrors: Error, CustomStringConvertible {
     case badURL
+    case fetchingXCDVideoError
+    case downloadingVideoError
+    case downloadingPhotoError
     case noInternetConnection
     case serverErrorWith(_ statusCode: Int)
 
@@ -17,6 +20,12 @@ enum RouterErrors: Error, CustomStringConvertible {
 
         case .badURL:
             return "Invalid URL"
+        case .fetchingXCDVideoError:
+            return "Error fetching XCD video"
+        case .downloadingVideoError:
+            return "Error downloading video"
+        case .downloadingPhotoError:
+            return "Error downloading photo"
         case .noInternetConnection:
             return "Нет соединения с интернетом"
         case .serverErrorWith(let statusCode):

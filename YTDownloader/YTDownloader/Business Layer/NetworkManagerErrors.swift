@@ -11,7 +11,7 @@ import UIKit
 enum NetworkManagerErrors: Error, CustomStringConvertible {
     case show
     case networkRouterErrors(error: RouterErrors)
-    case mapperErrors(error: MapperError)
+    case fileManagerErrors(error: FileManagerErrors)
 
     var description: String {
         switch self {
@@ -19,7 +19,7 @@ enum NetworkManagerErrors: Error, CustomStringConvertible {
             return "some error"
         case .networkRouterErrors(error: let error):
             return error.description
-        case .mapperErrors(error: let error):
+        case .fileManagerErrors(error: let error):
             return error.description
         }
     }

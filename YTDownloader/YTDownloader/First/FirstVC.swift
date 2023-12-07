@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+
 final class FirstVC: UIViewController {
 
     // MARK: - Private properties
@@ -20,7 +21,7 @@ final class FirstVC: UIViewController {
     }()
 
     private lazy var titleLabel: UILabel = {
-        let label = UILabel() 
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.backgroundColor = .red
         label.text = "You Down"
@@ -56,7 +57,7 @@ final class FirstVC: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
         button.tintColor = .black
-        button.addTarget(self, action: #selector(download(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(downloadAndSaveToGallery(_:)), for: .touchUpInside)
         return button
     }()
 
@@ -89,9 +90,14 @@ final class FirstVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        bindViewModel() //here bounds are ready for spinner
+    }
+
     // MARK: - Private methods
     private func setupView() {
-        [titleLabel, referenceTextField, downloadButton, historyButton].forEach { baseView.addSubview($0)}
+        [titleLabel, referenceTextField, downloadButton, historyButton, Show.spinner].forEach { baseView.addSubview($0)}
         view.addSubview(baseView)
         view.backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 1)
     }
@@ -108,7 +114,7 @@ final class FirstVC: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: baseView.topAnchor),
             titleLabel.heightAnchor.constraint(equalToConstant: Constants.headerHeight),
 
-            referenceTextField.leadingAnchor.constraint(equalTo: baseView.leadingAnchor, constant: Constants.insetForCell),
+            referenceTextField.leadingAnchor.constraint(equalTo: baseView.leadingAnchor, constant: Constants.insetForCell * 2),
             referenceTextField.trailingAnchor.constraint(equalTo: baseView.trailingAnchor, constant: -(Constants.buttonSize+Constants.insetForCell * 2)),
             referenceTextField.centerYAnchor.constraint(equalTo: baseView.centerYAnchor),
             referenceTextField.heightAnchor.constraint(equalToConstant: Constants.buttonSize * 1.32),
@@ -128,32 +134,52 @@ final class FirstVC: UIViewController {
 
     private func bindViewModel() {
         viewModel.closureChangingState = { [weak self] state in
-            guard let strongSelf = self else {return}
+            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана
 
             switch state {
             case .none:
-                <#code#>
+                ()
             case .processing:
-                <#code#>
+                Show.spinner.startAnimating()
+
             case .loading:
-                <#code#>
+                Show.spinner.stopAnimating()
+                //progress
+
             case .loadedAndSaved:
-                <#code#>
-            case .badURL(alertText: let alertText):
-                <#code#>
+                ShowAlert.type(.videoSavedToGallery, at: strongSelf, message: "Saved")
+
+            case .badURL(alertText: var alertTextForUser):
+                Show.spinner.stopAnimating()
+                ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
+                strongSelf.referenceTextField.text = nil
+
+            case .errorAtXCDDownloading(alertText: var alertTextForUser):
+                Show.spinner.stopAnimating()
+                ShowAlert.type(.XCDDidNotGetVideo, at: strongSelf, message: alertTextForUser)
+
             case .deleted:
-                <#code#>
+                ()
             case .pasted:
-                <#code#>
+                ()
             }
         }
     }
 
-    @objc private func download(_ sender: UIButton) {
-        let videoID = videoIDFromEnteredURL
-        viewModel.downloadVideo(at: videoID)
-    }
+    @objc private func downloadAndSaveToGallery(_ sender: UIButton) {
+        if referenceTextField.text != "" {
+            guard let newText = referenceTextField.text,
+                  let url = URL(string: newText),
+                  ["m.youtube.com", "www.youtube.com", "youtube.com", "youtu.be"].contains(url.host),
+                  let videoID = newText.extractYoutubeId() else {
+                viewModel.state = .badURL(alertText: "Invalid YouTube URL")
+                return
+            }
+            videoIDFromEnteredURL = videoID
 
+            viewModel.downloadVideo(at: videoIDFromEnteredURL, and: url)
+        }
+    }
 
     @objc private func showHistory(_ sender: UIButton) {
         viewModel.showSecondVC()
@@ -162,9 +188,10 @@ final class FirstVC: UIViewController {
 }
 
 
-// MARK: - Extensions UITextFieldDelegate
-extension FirstVC: UITextFieldDelegate {
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        videoIDFromEnteredURL = textField.text?.extractYoutubeId() ?? ""
-    }
-}
+// MARK: - Public methods
+//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+//            let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
+//            DispatchQueue.main.async {
+//                self.progressView.progress = progress
+//            }
+//        }

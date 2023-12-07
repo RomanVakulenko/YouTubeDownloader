@@ -7,10 +7,15 @@
 
 import Foundation
 import UIKit
+import AVKit
+import Photos
 
 final class CellForSecondVC: UICollectionViewCell {
 
-    private var videoModel: VideoForUI?
+//    private var videoModel: VideoForUI?
+
+//    var playerViewController = AVPlayerViewController()
+    private var playerLayer: AVPlayerLayer?
 
     private lazy var baseView: UIView = {
         let base = UIView()
@@ -21,18 +26,19 @@ final class CellForSecondVC: UICollectionViewCell {
     private lazy var videoView: UIView = {
         let videoView = UIView()
         videoView.translatesAutoresizingMaskIntoConstraints = false
-
-    //    let frame = UIView(frame: CGRect(x: 0, y: 95, width: screenWidth, height: 211))
-    //        let videoURL = URL(string: "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-    //        let player = AVPlayer(url: videoURL!)
-    //        let video = AVPlayerViewController()
-    //        video.player = player
-    //        video.view.frame = frame.bounds
-    //        frame.addSubview(video.view)
-    //        video.player?.play()
-    //        return frame
+//        let frame = UIView(frame: CGRect(x: 0, y: 95, width: screenWidth, height: 211))
+//            let videoURL = URL(string: "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+//            let player = AVPlayer(url: videoURL!)
+//            let video = AVPlayerViewController()
+//            video.player = player
+//            video.view.frame = frame.bounds
+//            frame.addSubview(video.view)
+//            video.player?.play()
+//            return frame
         return videoView
     }()
+
+
 
     private lazy var playButton: UIButton = {
         let button = UIButton()
@@ -76,6 +82,38 @@ final class CellForSecondVC: UICollectionViewCell {
 //        self.dateLabel = model.date //??нужен еще форматтер
     }
 
+    func configure(with asset: PHAsset) {
+            let options = PHVideoRequestOptions()
+            options.deliveryMode = .automatic
+            PHImageManager.default().requestPlayerItem(forVideo: asset, options: options) { [weak self] playerItem, _ in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    let player = AVPlayer(playerItem: playerItem)
+                    self.playerLayer = AVPlayerLayer(player: player)
+                    self.playerLayer?.frame = self.contentView.bounds
+                    self.contentView.layer.addSublayer(self.playerLayer!)
+                    player.play()
+                }
+            }
+        }
+
+//    func playVideoFromGallery() {
+//            let fetchOptions = PHFetchOptions()
+//            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+//            let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .video, options: fetchOptions)
+//            if let lastAsset = fetchResult.firstObject {
+//                PHImageManager.default().requestPlayerItem(forVideo: lastAsset, options: nil) { (playerItem, info) in
+//                    DispatchQueue.main.async {
+//                        self.playerViewController.player = AVPlayer(playerItem: playerItem)
+//                        self.present(self.playerViewController, animated: true) {
+//                            self.playerViewController.player?.play()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+
     // MARK: - Private methods
     private func setupView() {
         [videoView, playButton, deleteButton, dateLabel].forEach { baseView.addSubview($0) }
@@ -114,7 +152,13 @@ final class CellForSecondVC: UICollectionViewCell {
 
     // MARK: - Actions
     @objc func didTapPlay(_ sender: UIButton) {
-
+        guard let videoURL = URL(string: "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4") else { return }
+                let player = AVPlayer(url: videoURL)
+                let playerViewController = AVPlayerViewController()
+                playerViewController.player = player
+                UIApplication.shared.windows.first?.rootViewController?.present(playerViewController, animated: true) {
+                    player.play()
+                }
     }
 
     @objc func didTapDelete(_ sender: UIButton) {

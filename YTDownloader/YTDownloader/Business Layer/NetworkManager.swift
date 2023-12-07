@@ -27,18 +27,18 @@ final class NetworkManager { // только скачивает и декоди�
 }
 
 // MARK: - Extensions
-extension NetworkManager: NetworkManagerProtocol {
-    
-    func getDecodedModel<T: Decodable>(using url: URL, into model: T.Type) async throws -> T {
-        do {
-            let data = try await networkRouter.requestDataWith(url)
-            let decodedModel = try mapper.decode(from: data, toStruct: model)
-            return decodedModel
-        } catch let error as RouterErrors {
-            throw NetworkManagerErrors.networkRouterErrors(error: error)
-        } catch let error as MapperError {
-            throw NetworkManagerErrors.mapperErrors(error: error)
-        }
-    }
-
-}
+//extension NetworkManager: NetworkManagerProtocol {
+//    
+//    func getDecodedModel<T: Decodable>(using url: URL, into model: T.Type) async throws -> T {
+//        do {
+//            let data = try await networkRouter.requestDataWith(url)
+//            let decodedModel = try mapper.decode(from: data, toStruct: model)
+//            return decodedModel
+//        } catch let error as RouterErrors {
+//            throw NetworkManagerErrors.networkRouterErrors(error: error)
+//        } catch let error as MapperError {
+//            throw NetworkManagerErrors.mapperErrors(error: error)
+//        }
+//    }
+//
+//}
