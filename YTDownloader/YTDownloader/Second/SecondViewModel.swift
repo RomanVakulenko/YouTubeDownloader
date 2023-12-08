@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import Photos
+
 
 protocol DeleteDelegate: AnyObject {
     func organizeAlertAfterDeletion()
@@ -14,9 +16,10 @@ protocol DeleteDelegate: AnyObject {
 
 final class SecondViewModel {
 
-    // MARK: - Private properties
-    private(set) var ytModel: [VideoForUI] = []
+//    private(set) var ytModel: [VideoForUI] = []
+    var videos: [PHAsset] = []
 
+    // MARK: - Private properties
     private var coordinator: FirstScreenCoordinator?
     private weak var delDelegate: DeleteDelegate?
 
@@ -29,7 +32,6 @@ final class SecondViewModel {
     // MARK: - Public methods
     func deleteVideoAt(_ indexPath: IndexPath) { //?? как узнать в какой ячейке нажали на корзину?
         //обратиться к хранилищу и удалить оттуда
-
 
 
         coordinator?.popToRootVC()

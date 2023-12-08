@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Photos
 
 final class SecondVC: UIViewController {
 
@@ -45,7 +46,7 @@ final class SecondVC: UIViewController {
         super.viewDidLoad()
         setupView()
         layout()
-        
+        loadVideos()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -71,12 +72,30 @@ final class SecondVC: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+
+    func loadVideos() {
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .video, options: fetchOptions)
+            fetchResult.enumerateObjects { [weak self] asset, _, _ in
+                self?.viewModel.videos.append(asset)
+            }
+            collectionView.reloadData()
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource
 extension SecondVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.ytModel.count
+        return viewModel.videos.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
+        cell.configure(with: viewModel.videos[indexPath.row])
+
+        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -90,12 +109,6 @@ extension SecondVC: UICollectionViewDataSource {
         default:
             return UICollectionReusableView()
         }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
-
-        return cell
     }
 }
 

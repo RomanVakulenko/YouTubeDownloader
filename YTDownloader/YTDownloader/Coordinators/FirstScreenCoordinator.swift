@@ -26,9 +26,11 @@ final class FirstScreenCoordinator {
 
     // MARK: - Private methods
     private func createFirstVC() -> UIViewController {
-
-
-        let viewModel = FirstViewModel(coordinator: self)
+        let fileManager = LocalFilesManager()
+        let networkService = YTNetworkService(manager: fileManager)
+        let viewModel = FirstViewModel(coordinator: self,
+                                       networkService: networkService,
+                                       fManager: fileManager)
         let firstVC = FirstVC(viewModel: viewModel)
         let navController = UINavigationController(rootViewController: firstVC)
         navigationController = navController
