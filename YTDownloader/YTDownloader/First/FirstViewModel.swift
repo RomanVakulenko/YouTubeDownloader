@@ -25,6 +25,7 @@ final class FirstViewModel {
     enum State { //дописать
         case none
         case processing
+        case fileExists
         case loading
         case loadedAndSaved //??надо ли делать еще 1 для запроcа доступа к ФОТО на 1ый раз - или это в самом методе проверим
         case badURL(alertText: String)

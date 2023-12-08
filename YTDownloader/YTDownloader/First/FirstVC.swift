@@ -134,7 +134,7 @@ final class FirstVC: UIViewController {
 
     private func bindViewModel() {
         viewModel.closureChangingState = { [weak self] state in
-            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана
+            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
 
             switch state {
             case .none:
@@ -142,12 +142,16 @@ final class FirstVC: UIViewController {
             case .processing:
                 Show.spinner.startAnimating()
 
+            case .fileExists:
+                Show.spinner.stopAnimating()
+                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
+
             case .loading:
                 Show.spinner.stopAnimating()
                 //progress
 
             case .loadedAndSaved:
-                ShowAlert.type(.videoSavedToGallery, at: strongSelf, message: "Saved")
+                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to Photo")
 
             case .badURL(alertText: var alertTextForUser):
                 Show.spinner.stopAnimating()
@@ -160,8 +164,10 @@ final class FirstVC: UIViewController {
 
             case .deleted:
                 ()
+
             case .pasted:
-                ()
+                () //после выхода из приложения вроде бы вставляет крайнюю ссылку (значит ее надо куда-то сохранять и перезаписывать)
+
             }
         }
     }
