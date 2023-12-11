@@ -145,14 +145,14 @@ final class FirstVC: UIViewController {
                         
                     case .fileExists:
                         Show.spinner.stopAnimating()
-                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
+                        ShowAlert.type(.fileExists, at: strongSelf, message: "File already exists")
                         
                     case .loading:
                         Show.spinner.stopAnimating()
                         //progress
                         
                     case .loadedAndSaved:
-                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to History")
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved to History")
                         
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
