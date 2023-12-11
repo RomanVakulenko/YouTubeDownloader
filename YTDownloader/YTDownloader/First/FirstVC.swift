@@ -133,43 +133,39 @@ final class FirstVC: UIViewController {
     }
 
     private func bindViewModel() {
-        viewModel.closureChangingState = { [weak self] state in
-            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
 
-            switch state {
-            case .none:
-                ()
-            case .processing:
-                Show.spinner.startAnimating()
+            self.viewModel.closureChangingState = { [weak self] state in
+                guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
+                DispatchQueue.main.async {
+                    switch state {
+                    case .none:
+                        ()
+                    case .processing:
+                        Show.spinner.startAnimating()
+                        
+                    case .fileExists:
+                        Show.spinner.stopAnimating()
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
+                        
+                    case .loading:
+                        Show.spinner.stopAnimating()
+                        //progress
+                        
+                    case .loadedAndSaved:
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to History")
+                        
+                    case .badURL(alertText: let alertTextForUser):
+                        Show.spinner.stopAnimating()
+                        ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
+                        strongSelf.referenceTextField.text = nil
 
-            case .fileExists:
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
-
-            case .loading:
-                Show.spinner.stopAnimating()
-                //progress
-
-            case .loadedAndSaved:
-                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to Photo")
-
-            case .badURL(alertText: var alertTextForUser):
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
-                strongSelf.referenceTextField.text = nil
-
-            case .errorAtXCDDownloading(alertText: var alertTextForUser):
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.XCDDidNotGetVideo, at: strongSelf, message: alertTextForUser)
-
-            case .deleted:
-                ()
-
-            case .pasted:
-                () //после выхода из приложения вроде бы вставляет крайнюю ссылку (значит ее надо куда-то сохранять и перезаписывать)
-
+                    case .thereIsNoAnyVideo:
+                        ShowAlert.type(.thereIsNoAnyVideo, at: strongSelf, message: "There is no any Video")
+                    }
+                }
             }
-        }
+
+
     }
 
     @objc private func downloadAndSaveToGallery(_ sender: UIButton) {

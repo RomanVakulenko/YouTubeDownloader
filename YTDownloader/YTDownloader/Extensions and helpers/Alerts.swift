@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 enum AlertCases {
-    case invalidURL, fileExists, XCDDidNotGetVideo, videoSavedToPhotoLibrary
+    case invalidURL, fileExists, thereIsNoAnyVideo, videoSavedToPhotoLibrary
 }
 
 enum ShowAlert {
@@ -23,7 +23,10 @@ enum ShowAlert {
 
         alertController.addAction(UIAlertAction(title: "Ok", style: .destructive))
 
-        vc.present(alertController, animated: true)
+        DispatchQueue.main.async {
+            vc.present(alertController, animated: true)
+        }
+
     }
 
 }
