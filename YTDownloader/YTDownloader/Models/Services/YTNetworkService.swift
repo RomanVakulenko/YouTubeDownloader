@@ -14,11 +14,7 @@ typealias NetworkServiceCompletion = (Result<(() -> Void)?, NetworkManagerErrors
 
 
 protocol YTNetworkServiceProtocol: AnyObject {
-    func downloadVideo(videoIdentifier: String,
-                       videoURL: URL,
-                       _ completion: @escaping NetworkServiceCompletion) throws
-//                       onCompleted: (() -> Void)?, //во viewModel покажем уведомление saved
-//                       errorHandler: ((Error) -> Void)?)
+    func downloadVideo(videoIdentifier: String, videoURL: URL) throws
 }
 
 
@@ -27,7 +23,7 @@ final class YTNetworkService {
     // MARK: - Public properties
     var fileName: String?
     var photoURL: URL?
-    var successCompletion: (() -> Void)?
+//    var successCompletion: (() -> Void)?
 
     // MARK: - Private properties
     private let manager: LocalFilesManagerProtocol
@@ -40,7 +36,7 @@ final class YTNetworkService {
     private func fetchVideoInfo(youTubeID: String,
                                 onCompleted: @escaping (_ video: XCDYouTubeVideo) -> Void) {
 
-        XCDYouTubeClient.default().getVideoWithIdentifier(youTubeID) { video, error in //убрал [weak self]
+        XCDYouTubeClient.default().getVideoWithIdentifier(youTubeID) { video, error in 
             guard let video = video else {
                 if error != nil {
                     print("Error at fetching XCD Video")
@@ -57,9 +53,7 @@ final class YTNetworkService {
 // MARK: - Extensions YTNetworkServiceProtocol
 extension YTNetworkService: YTNetworkServiceProtocol {
 
-    func downloadVideo(videoIdentifier: String,
-                       videoURL: URL,
-                       _ completion: @escaping NetworkServiceCompletion) throws {
+    func downloadVideo(videoIdentifier: String, videoURL: URL) throws {
 
 
         fetchVideoInfo(youTubeID: videoIdentifier) { [weak self] video in
@@ -75,24 +69,15 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         .filter { $0.isProgressive && $0.subtype == "mp4" }
                         .lowestResolutionStream()?
                         .url
-                    print("streamURL == \(String(describing: streamURL))")
-
                     guard let streamURL else {
                         print("streamURL error")
                         return
                     }
 
-                    self.successCompletion?() //идея или забрать контекст для следующего кода - для manager.downloadFile
-
-                    try self.manager.downloadFileAndSaveToPhotoGallery(file: File.video, from: streamURL, filename: self.fileName!, extension: "mp4")
-                    try self.manager.downloadFileAndSaveToPhotoGallery(file: File.photo, from: self.photoURL!, filename: self.fileName!, extension: "jpg")
-                    //
-                } catch {
-                    switch error {
-
-                    default:
-                        ()
-                    }
+                    try self.manager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
+                    try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: self.photoURL!, filename: self.fileName!, extension: "jpg")
+                } catch let error as RouterErrors {
+                    throw NetworkManagerErrors.networkRouterErrors(error: error)
                 }
             }
 

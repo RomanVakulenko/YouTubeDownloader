@@ -15,33 +15,31 @@ protocol NetworkAPIProtocol: AnyObject {
 }
 
 protocol FirstVCViewModelProtocol: AnyObject {
-    var closureChangingState: ((FirstViewModel.State) -> Void)? { get set }
+    var closureChangingState: ((State) -> Void)? { get set }
 }
 
+enum State { //дописать
+    case none
+    case processing
+    case fileExists
+    case loading
+    case loadedAndSaved
+    case badURL(alertText: String)
+    case errorAtXCDDownloading(alertText: String)
+    case deleted
+}
 
 final class FirstViewModel {
 
-    // MARK: - Enum
-    enum State { //дописать
-        case none
-        case processing
-        case fileExists
-        case loading
-        case loadedAndSaved //??надо ли делать еще 1 для запроcа доступа к ФОТО на 1ый раз - или это в самом методе проверим
-        case badURL(alertText: String)
-        case errorAtXCDDownloading(alertText: String)
-        case deleted
-        case pasted
-    }
-
     // MARK: - Public properties
     var closureChangingState: ((State) -> Void)?
+    var progress: Double?
     var state: State = .none {
         didSet {
             closureChangingState?(state)
         }
     }
-    
+
     var fileName: String?
     var photoURL: URL?
 
@@ -77,28 +75,35 @@ extension FirstViewModel: NetworkAPIProtocol {
 
         Task {
             do {
-                try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url) { result in
+                try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url)
 
-                    switch result {
-                    case .success(_):
-//                        <#code#> //переделал на MVVM + C, должно скачивать и сохранять видео 
-                        self.state = .loadedAndSaved
-                    case .failure(_):
-//                        <#code#>
-                        self.state = .badURL(alertText: "error in viewModel")
+                fManager.statusClosure = { [weak self] status in
+                    switch status {
+                        
+                    case .fileExists:
+                        self?.state = .fileExists
+                    case .loading:
+                        self?.state = .loading
+//                        self?.fManager.progressClosure = { downloadingProgress in
+//                            self?.progress = downloadingProgress
+//                        }
+                    case .loadedAndSaved:
+                        self?.state = .loadedAndSaved
+                    case .badURL(alertText: let alertTextForUser):
+                        self?.state = .badURL(alertText: alertTextForUser)
+                    case .deleted:
+                        ()
+                    default: print("зашел в дефолтный кейс fManagerА")
                     }
                 }
             } catch {
                 switch error {
-
-                default:
-                    print("smth")//????
+                case NetworkManagerErrors.networkRouterErrors(error: .fetchingXCDVideoError):
+                    print("XCDYouTubeVideo не смог сделать URL для загрузки с инета")
+                default: print(error.localizedDescription)
                 }
-
             }
         }
-
-        
     }
 }
 

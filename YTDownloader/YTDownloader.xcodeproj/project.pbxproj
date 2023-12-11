@@ -33,7 +33,6 @@
 		ADBA6E1D2B18A035006A23EB /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBA6E1C2B18A035006A23EB /* Alerts.swift */; };
 		ADBB992B2B1DDE7700E5DBCD /* YTNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */; };
 		ADBB992E2B1DE5EA00E5DBCD /* MediaFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB992D2B1DE5EA00E5DBCD /* MediaFileModel.swift */; };
-		ADBCBBF42B1621820070EDC0 /* NetworkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */; };
 		ADBCBBF62B16244D0070EDC0 /* RouterErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */; };
 		ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF72B162E380070EDC0 /* Mapper.swift */; };
 		ADBCBBFA2B1631700070EDC0 /* MapperError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF92B1631700070EDC0 /* MapperError.swift */; };
@@ -72,7 +71,6 @@
 		ADBA6E1C2B18A035006A23EB /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTNetworkService.swift; sourceTree = "<group>"; };
 		ADBB992D2B1DE5EA00E5DBCD /* MediaFileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileModel.swift; sourceTree = "<group>"; };
-		ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRouter.swift; sourceTree = "<group>"; };
 		ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterErrors.swift; sourceTree = "<group>"; };
 		ADBCBBF72B162E380070EDC0 /* Mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mapper.swift; sourceTree = "<group>"; };
 		ADBCBBF92B1631700070EDC0 /* MapperError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperError.swift; sourceTree = "<group>"; };
@@ -212,7 +210,6 @@
 		ADBCBBF22B1621410070EDC0 /* Core networkLayer */ = {
 			isa = PBXGroup;
 			children = (
-				ADBCBBF32B1621820070EDC0 /* NetworkRouter.swift */,
 				ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */,
 				ADBCBBF72B162E380070EDC0 /* Mapper.swift */,
 				ADBCBBF92B1631700070EDC0 /* MapperError.swift */,
@@ -342,7 +339,6 @@
 				AD7C7C642B1322BA00C8A8CE /* FirstViewModel.swift in Sources */,
 				AD7C7C4A2B13148500C8A8CE /* SceneDelegate.swift in Sources */,
 				ADF2B1442B2080EF002A3304 /* FileManagerErrors.swift in Sources */,
-				ADBCBBF42B1621820070EDC0 /* NetworkRouter.swift in Sources */,
 				AD7C7C782B14C6FB00C8A8CE /* HeaderForSecondVC.swift in Sources */,
 				AD7C7C682B1474AF00C8A8CE /* YTVideoDecoded.swift in Sources */,
 				ADB695662B1A19C7001E4C09 /* UIViewContr + ext.swift in Sources */,

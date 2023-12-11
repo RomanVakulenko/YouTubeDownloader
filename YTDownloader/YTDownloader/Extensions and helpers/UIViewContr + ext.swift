@@ -52,15 +52,15 @@ extension UIViewController {
     }
 
     func updateProgressView(to value: Double) {
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             (Circular.progressView?.viewWithTag(10) as! UIProgressView).progress = Float(value)
-        }
+//        }
     }
 
     func removeProgressView() {
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             Circular.progressView?.removeFromSuperview()
             Circular.progressView = nil
-        }
+//        }
     }
 }

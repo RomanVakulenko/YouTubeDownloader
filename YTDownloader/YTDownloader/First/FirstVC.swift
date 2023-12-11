@@ -134,39 +134,44 @@ final class FirstVC: UIViewController {
 
     private func bindViewModel() {
         viewModel.closureChangingState = { [weak self] state in
-            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
+            guard let strongSelf = self,
+                  let progress = self?.viewModel.progress else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
 
-            switch state {
-            case .none:
-                ()
-            case .processing:
-                Show.spinner.startAnimating()
+            DispatchQueue.main.async {
 
-            case .fileExists:
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
+                switch state {
+                case .none:
+                    ()
+                case .processing:
+                    Show.spinner.startAnimating()
 
-            case .loading:
-                Show.spinner.stopAnimating()
-                //progress
+                case .fileExists:
+                    Show.spinner.stopAnimating()
+                    ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "File already exists")
 
-            case .loadedAndSaved:
-                ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to Photo")
+                case .loading:
+//                    strongSelf.showProgressView(onView: (self?.view)!, withTitle: "Downloading") // ??не будет ли краша??
+                    Show.spinner.stopAnimating()
+//                    strongSelf.updateProgressView(to: progress)
 
-            case .badURL(alertText: var alertTextForUser):
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
-                strongSelf.referenceTextField.text = nil
+                case .loadedAndSaved:
+                    strongSelf.removeProgressView()
+                    ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Saved to Photo")
 
-            case .errorAtXCDDownloading(alertText: var alertTextForUser):
-                Show.spinner.stopAnimating()
-                ShowAlert.type(.XCDDidNotGetVideo, at: strongSelf, message: alertTextForUser)
+                case .badURL(alertText: let alertTextForUser):
+                    Show.spinner.stopAnimating()
+                    strongSelf.removeProgressView()
+                    ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
+                    strongSelf.referenceTextField.text = nil
 
-            case .deleted:
-                ()
+                case .errorAtXCDDownloading(alertText: let alertTextForUser):
+                    Show.spinner.stopAnimating()
+                    strongSelf.removeProgressView()
+                    ShowAlert.type(.XCDDidNotGetVideo, at: strongSelf, message: alertTextForUser)
 
-            case .pasted:
-                () //после выхода из приложения вроде бы вставляет крайнюю ссылку (значит ее надо куда-то сохранять и перезаписывать)
+                case .deleted:
+                    ()
+                }
 
             }
         }

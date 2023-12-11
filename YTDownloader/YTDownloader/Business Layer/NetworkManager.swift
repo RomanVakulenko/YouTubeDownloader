@@ -15,12 +15,12 @@ protocol NetworkManagerProtocol: AnyObject {
 final class NetworkManager { // только скачивает и декодирует JSON в struct
 
     // MARK: - Private properties
-    private let networkRouter: NetworkRouterProtocol
+//    private let networkRouter: NetworkRouterProtocol
     private let mapper: MapperProtocol
 
     // MARK: - Init
-    init(networkRouter: NetworkRouterProtocol, mapper: MapperProtocol) {
-        self.networkRouter = networkRouter
+    init( mapper: MapperProtocol) {
+//        self.networkRouter = networkRouter
         self.mapper = mapper
     }
 
