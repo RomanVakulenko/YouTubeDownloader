@@ -15,25 +15,23 @@ protocol NetworkAPIProtocol: AnyObject {
 }
 
 protocol FirstVCViewModelProtocol: AnyObject {
-    var closureChangingState: ((FirstViewModel.State) -> Void)? { get set }
+    var closureChangingState: ((State) -> Void)? { get set }
 }
 
+// MARK: - Enum
+enum State { //дописать
+    case none
+    case processing
+    case fileExists
+    case loading
+    case loadedAndSaved
+    case badURL(alertText: String)
+    case thereIsNoAnyVideo
+}
 
 final class FirstViewModel {
-
-    // MARK: - Enum
-    enum State { //дописать
-        case none
-        case processing
-        case fileExists
-        case loading
-        case loadedAndSaved //??надо ли делать еще 1 для запроcа доступа к ФОТО на 1ый раз - или это в самом методе проверим
-        case badURL(alertText: String)
-        case errorAtXCDDownloading(alertText: String)
-        case deleted
-        case pasted
-    }
-
+    
+    
     // MARK: - Public properties
     var closureChangingState: ((State) -> Void)?
     var state: State = .none {
@@ -44,69 +42,76 @@ final class FirstViewModel {
     
     var fileName: String?
     var photoURL: URL?
-
+    
     // MARK: - Private properties
     private weak var coordinator: FirstScreenCoordinator?
     private let networkService: YTNetworkServiceProtocol
     private let fManager: LocalFilesManagerProtocol
-
-
+    
+    
     // MARK: - Init
     init(coordinator: FirstScreenCoordinator, networkService:YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
         self.coordinator = coordinator
         self.networkService = networkService
         self.fManager = fManager
     }
-
+    
     // MARK: - Public methods
     func showSecondVC() {
         coordinator?.pushSecondVC(deleteDetegate: self)
     }
-
+    
     // MARK: - Private methods
-
+    
 }
 
 
 // MARK: - FirstVCViewModelProtocol
 extension FirstViewModel: NetworkAPIProtocol {
-
+    
     @MainActor
     func downloadVideo(at videoID: String, and url: URL) {
         state = .processing //сразу после того как нажали на download
 
         Task {
             do {
-                try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url) { result in
-
-                    switch result {
-                    case .success(_):
-//                        <#code#> //переделал на MVVM + C, должно скачивать и сохранять видео 
-                        self.state = .loadedAndSaved
-                    case .failure(_):
-//                        <#code#>
-                        self.state = .badURL(alertText: "error in viewModel")
+                try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url)
+                
+                fManager.statusClosure = { [weak self] status in
+                    switch status {
+                        
+                    case .fileExists:
+                        self?.state = .fileExists
+                    case .loading:
+                        self?.state = .loading
+                        //                        self?.fManager.progressClosure = { downloadingProgress in
+                        //                            self?.progress = downloadingProgress
+                        //                        }
+                    case .loadedAndSaved:
+                        self?.state = .loadedAndSaved
+                    case .badURL(alertText: let alertTextForUser):
+                        self?.state = .badURL(alertText: alertTextForUser)
+                    case .thereIsNoAnyVideo:
+                        ()
+                    default: print("зашел в дефолтный кейс fManagerА")
                     }
                 }
             } catch {
                 switch error {
-
-                default:
-                    print("smth")//????
+                case NetworkManagerErrors.networkRouterErrors(error: .fetchingXCDVideoError):
+                    print("XCDYouTubeVideo не смог сделать URL для загрузки с инета")
+                default: print(error.localizedDescription)
                 }
-
             }
         }
-
-        
     }
 }
 
 
 extension FirstViewModel: DeleteDelegate {
     func organizeAlertAfterDeletion() {
-
+        
     }
-
-
+    
+    
 }

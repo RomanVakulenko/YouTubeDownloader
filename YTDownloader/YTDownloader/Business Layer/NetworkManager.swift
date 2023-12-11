@@ -4,31 +4,26 @@
 //
 //  Created by Roman Vakulenko on 28.11.2023.
 //
-
 import Foundation
 import UIKit
-
 protocol NetworkManagerProtocol: AnyObject {
     func getDecodedModel<T: Decodable>(using url: URL, into model: T.Type) async throws -> T
 }
-
 final class NetworkManager { // только скачивает и декодирует JSON в struct
-
     // MARK: - Private properties
-    private let networkRouter: NetworkRouterProtocol
+    //    private let networkRouter: NetworkRouterProtocol
     private let mapper: MapperProtocol
-
+    
     // MARK: - Init
-    init(networkRouter: NetworkRouterProtocol, mapper: MapperProtocol) {
-        self.networkRouter = networkRouter
+    init( mapper: MapperProtocol) {
+        //        self.networkRouter = networkRouter
         self.mapper = mapper
     }
-
 }
 
 // MARK: - Extensions
 //extension NetworkManager: NetworkManagerProtocol {
-//    
+//
 //    func getDecodedModel<T: Decodable>(using url: URL, into model: T.Type) async throws -> T {
 //        do {
 //            let data = try await networkRouter.requestDataWith(url)
