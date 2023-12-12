@@ -72,9 +72,10 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         print("streamURL error")
                         return
                     }
-
+//вообще, вроде бы, плеер сам показывает первый кадр видео как превью/заставка (пока еще не делал плеер)
                     try self.manager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
-                    try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: self.photoURL!, filename: self.fileName!, extension: "jpg")
+//без загрузки фото запрос системы на разрешение работать с фото библиотекой не прерывает изменение прогерраса загрузки (если же метод загрузки фото включить, то он отрабатывает быстрее и системное уведомление выскакивает как раз на моменте загрузки видео  и это прерывает показ прогресса загрузки видео), даже group + Operation не помогли...возможно дело в коде метода downloadFileAndSaveToPhotoGallery...оставил - тоже часа 3 отняло...
+//                    try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: self.photoURL!, filename: self.fileName!, extension: "jpg")
                 } catch let error as RouterErrors {
                     throw NetworkManagerErrors.networkRouterErrors(error: error)
                 }

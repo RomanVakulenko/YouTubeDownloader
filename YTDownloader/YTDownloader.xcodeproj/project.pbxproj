@@ -160,6 +160,7 @@
 		AD7C7C702B14A72500C8A8CE /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				ADBB992D2B1DE5EA00E5DBCD /* MediaFileModel.swift */,
 				AD7C7C652B14744D00C8A8CE /* VideoForUI.swift */,
 				AD7C7C672B1474AF00C8A8CE /* YTVideoDecoded.swift */,
 				ADBB992C2B1DDE7E00E5DBCD /* Services */,
@@ -202,7 +203,6 @@
 			isa = PBXGroup;
 			children = (
 				ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */,
-				ADBB992D2B1DE5EA00E5DBCD /* MediaFileModel.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -484,7 +484,9 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "YTDowloader requires access to the Photo Library to add files";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDowloader requires access to the Photo Library";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -513,7 +515,9 @@
 				DEVELOPMENT_TEAM = 994K78QDG8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YTDownloader/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "YTDowloader requires access to the Photo Library to add files";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDowloader requires access to the Photo Library";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

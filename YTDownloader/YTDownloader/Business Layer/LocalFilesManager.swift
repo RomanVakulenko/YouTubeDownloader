@@ -45,20 +45,21 @@ final class LocalFilesManager {
 
     }
 
-    func deleteVideoBy(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
+    func deleteByFile(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
         var assetsLocalIDs = [String]()
-        let oneID = userDefaults.object(forKey: "\(nameAndExt)") as! String
+        let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
+        guard let oneID = oneID else {
+            print("Не смог достать объект \(nameAndExt) по этому же ключу из userDefaults, странно, но иногда выкидывает системный запрос на удаление видео, удаляю/Allow, но в приложении Фото видео висит))) пытался часа 4 это сделать и оставил так")
+            return
+        }
         assetsLocalIDs.append(oneID)
-        //                PhotoASSET_ID is = 4661BAA8-F374-4D16-9E19-3BCAA2321293/L0/001
-        //                VideoASSET_ID is = 6F80236D-8087-4450-A45F-40607D28BD0F/L0/001
         let allAssets = PHAsset.fetchAssets(withLocalIdentifiers: assetsLocalIDs, options: nil)
-        //почему-то удаляет только видео а фото не удаляет - возможно дело в последовaтельности вызовов ??....
         if let assetToDelete = allAssets.firstObject {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.deleteAssets([assetToDelete] as NSArray)
             }) { success, error in
                 if success {
-                    print("Файл удален успешно")
+                    print("Файл \(nameAndExt) удален успешно")
                 } else {
                     print("Ошибка удаления файла: \(error!.localizedDescription)")
                 }
@@ -85,10 +86,13 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
         }
         let nameAndExt = filename + "." + ext
         let fileURLwithNameAndExt = documentsURL.appendingPathComponent(nameAndExt)
-
+        
         if fileManager.fileExists(atPath: fileURLwithNameAndExt.path) {
             print("File already exists")
-            self.statusClosure?(State.fileExists)
+            if file  == .video {
+                self.statusClosure?(State.fileExists)
+            }
+            self.deleteByFile(nameAndExt)
             do {
                 try self.fileManager.removeItem(at: fileURLwithNameAndExt)
                 print("File \(nameAndExt) was removed from FileManager")
@@ -96,7 +100,9 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
             }
         } else {
-            self.statusClosure?(State.loading)
+            if file  == .video {
+                self.statusClosure?(State.loading)
+            }
             let urlRequest = URLRequest(url: wwwlink)
             let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
                 self.observation?.invalidate()
@@ -105,28 +111,29 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                     print("Не смог скачать data")
                     return
                 }
-                print("data = \(data)")
-                //записываем data в FileManager, чтобы потом сохранить через путь в PhotoLibrary
+                ///записываем data в FileManager
                 self.fileManager.createFile(atPath: documentsURL.appendingPathComponent(nameAndExt).path, contents: data)// в YouOn он зачем-то записывает файл сначала в FileManager...
 
                 let statusCode = response.statusCode
                 if statusCode < 200 && statusCode > 299 {//прокидывать ошибку не дает dataTask
-                    self.statusClosure?(State.badURL(alertText: "Сервер не отвечает"))
+                    if file  == .video {
+                        self.statusClosure?(State.badURL(alertText: "Сервер не отвечает"))
+                    }
                 }
                 
                 do {
                     switch file {
                     case .video:
+                        self.userDefaults.set(Date(), forKey: "\(nameAndExt)")
+
                         try PHPhotoLibrary.shared().performChangesAndWait {
                             let request = PHAssetCreationRequest.forAsset()
-                            //                            request.addResource(with: .video, data: data, options: nil)
                             request.addResource(with: .video, fileURL: fileURLwithNameAndExt, options: nil) // бывает вариант с data
                             if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
                                 self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления (видео не удается удалять из PhotoLibrary, а фото удаляет)
                                 print("VideoASSET_ID is = \(assetID)")
                             }
                         }
-                        print("Video saved to Photo Library")
                         self.statusClosure?(State.loadedAndSaved)
 
                     case .photo:
@@ -138,7 +145,6 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                                 print("PhotoASSET_ID is = \(assetID)")
                             }
                         }
-                        print("Photo saved to Photo Library")
                     }
                 } catch {
                     switch error {
@@ -149,22 +155,21 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                     default:
                         print("Error saving \(file) to Photo Library: \(error.localizedDescription)")
                     }
-                    self.statusClosure?(State.badURL(alertText: "Попробуйте позже"))
+                    if file  == .video {
+                        self.statusClosure?(State.badURL(alertText: "Попробуйте позже"))
+                    }
                     return
                 }
 
             }
             ///следим за прогрессом загрузки
-            switch file {
-            case .video:
+            if file  == .video {
                 self.observation = dataTask.progress.observe(\.fractionCompleted) { observingProgress, _ in
                     ///передаем значение прогресса в гл. потоке
                     DispatchQueue.main.async {
                         self.progressClosure?(Float(observingProgress.fractionCompleted))
                     }
                 }
-            case .photo:
-                print("Photo saved to Photo Library")
             }
             dataTask.resume()
         }
