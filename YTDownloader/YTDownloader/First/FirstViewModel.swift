@@ -34,6 +34,15 @@ final class FirstViewModel {
     
     // MARK: - Public properties
     var closureChangingState: ((State) -> Void)?
+    let fManager: LocalFilesManagerProtocol
+
+//    var closureChangingProgress: ((Float) -> Void)?
+//    var progress: Float = 0.0 {
+//        didSet {
+//            closureChangingProgress?(progress)
+//        }
+//    }
+
     var state: State = .none {
         didSet {
             closureChangingState?(state)
@@ -46,7 +55,6 @@ final class FirstViewModel {
     // MARK: - Private properties
     private weak var coordinator: FirstScreenCoordinator?
     private let networkService: YTNetworkServiceProtocol
-    private let fManager: LocalFilesManagerProtocol
     
     
     // MARK: - Init
@@ -60,6 +68,10 @@ final class FirstViewModel {
     func showSecondVC() {
         coordinator?.pushSecondVC(deleteDetegate: self)
     }
+//    func updateProgress(_ progress: Float) {
+//        self.progress = progress
+//        closureChangingProgress?(progress)
+//    }
     
     // MARK: - Private methods
     
@@ -79,18 +91,18 @@ extension FirstViewModel: NetworkAPIProtocol {
                 
                 fManager.statusClosure = { [weak self] status in
                     switch status {
-                        
                     case .fileExists:
                         self?.state = .fileExists
+
                     case .loading:
                         self?.state = .loading
-                        //                        self?.fManager.progressClosure = { downloadingProgress in
-                        //                            self?.progress = downloadingProgress
-                        //                        }
+
                     case .loadedAndSaved:
                         self?.state = .loadedAndSaved
+
                     case .badURL(alertText: let alertTextForUser):
                         self?.state = .badURL(alertText: alertTextForUser)
+
                     case .thereIsNoAnyVideo:
                         ()
                     default: print("зашел в дефолтный кейс fManagerА")
