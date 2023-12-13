@@ -10,31 +10,44 @@ import UIKit
 import Photos
 
 
-protocol DeleteDelegate: AnyObject {
-    func organizeAlertAfterDeletion()
+protocol EmptyVideoDelegateProtocol: AnyObject {
+    func organizeAlertOfNoVideo()
 }
+
 
 final class SecondViewModel {
 
-//    private(set) var ytModel: [VideoForUI] = []
-    var videos: [PHAsset] = []
+    // MARK: - Public properties
+    var videos: [MediaItemProtocol] = []
+    let fManager: LocalFilesManagerProtocol
 
     // MARK: - Private properties
-    private var coordinator: FirstScreenCoordinator?
-    private weak var delDelegate: DeleteDelegate?
+    private var coordinator: VideoFlowCoordinator?
+    private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
+
 
     // MARK: - Init
-    init(coordinator: FirstScreenCoordinator, delDelegate: DeleteDelegate) {
+    init(fManager: LocalFilesManagerProtocol, coordinator: VideoFlowCoordinator?, emptyVideoAlertDelegate: EmptyVideoDelegateProtocol?) {
+        self.fManager = fManager
         self.coordinator = coordinator
-        self.delDelegate = delDelegate
+        self.emptyVideoDelegate = emptyVideoAlertDelegate
     }
 
     // MARK: - Public methods
-    func deleteVideoAt(_ indexPath: IndexPath) { //?? как узнать в какой ячейке нажали на корзину?
-        //обратиться к хранилищу и удалить оттуда
+    func createVideosCollection() {
 
+    }
+
+    func deleteVideoAt(_ indexPath: IndexPath) {
+        //обратиться к хранилищу и удалить оттуда
 
         coordinator?.popToRootVC()
     }
 
+    //запускать, когда 2 контроллер уходит с экрана
+    func informIfNoVideo() {
+        if videos.isEmpty {
+            emptyVideoDelegate?.organizeAlertOfNoVideo()
+        }
+    }
 }

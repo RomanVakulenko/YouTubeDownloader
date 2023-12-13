@@ -65,7 +65,7 @@ final class FirstVC: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemGray6
-        button.setTitle("History", for: .normal)
+        button.setTitle("Downloaded video", for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 0.6
@@ -162,7 +162,7 @@ final class FirstVC: UIViewController {
 
             historyButton.topAnchor.constraint(equalTo: referenceTextField.bottomAnchor, constant: Constants.headerHeight*2),
             historyButton.centerXAnchor.constraint(equalTo: baseView.centerXAnchor),
-            historyButton.widthAnchor.constraint(equalToConstant: Constants.headerHeight * 2),
+            historyButton.widthAnchor.constraint(equalToConstant: Constants.headerHeight * 3),
             historyButton.heightAnchor.constraint(equalToConstant: Constants.buttonSize * 1.32)
         ])
     }

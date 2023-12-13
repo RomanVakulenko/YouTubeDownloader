@@ -9,6 +9,10 @@ import UIKit
 import AVFoundation
 import Photos
 
+protocol someProtocol {
+
+}
+
 protocol LocalFilesManagerProtocol: AnyObject {
     var statusClosure: ((State) -> Void)? {get set}
     var progressClosure: ((Float) ->Void)? {get set}
@@ -29,10 +33,17 @@ final class LocalFilesManager {
     let userDefaults = UserDefaults.standard
     var statusClosure: ((State) -> Void)?
     var progressClosure: ((Float) ->Void)?
+    var videoItemWithData: VideoItemData?
+    var encodedVideoItemData: Data?
+    var assetID: String?
 
     // MARK: - Private properties
     private var observation: NSKeyValueObservation?
+    private let mapper: MapperProtocol
 
+    init(mapper: MapperProtocol) {
+        self.mapper = mapper
+    }
 
     // MARK: - Public methods
     func getLocalFileURL(withNameAndExtension fileName_ext: String) -> URL {
@@ -41,11 +52,7 @@ final class LocalFilesManager {
 
 
     // MARK: - Private methods
-    func isVideoExistIn(photoLibrary: [String: URL]) {
-
-    }
-
-    func deleteByFile(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
+    func deleteFileBy(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
         var assetsLocalIDs = [String]()
         let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
         guard let oneID = oneID else {
@@ -72,6 +79,11 @@ final class LocalFilesManager {
 
 }
 
+// MARK: - Extensions
+extension LocalFilesManager: someProtocol {
+ //что-то хотел сделать...
+}
+
 // MARK: - Extensions LocalFilesManagerProtocol
 
 extension LocalFilesManager: LocalFilesManagerProtocol {
@@ -92,7 +104,7 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
             if file  == .video {
                 self.statusClosure?(State.fileExists)
             }
-            self.deleteByFile(nameAndExt)
+            self.deleteFileBy(nameAndExt)
             do {
                 try self.fileManager.removeItem(at: fileURLwithNameAndExt)
                 print("File \(nameAndExt) was removed from FileManager")
@@ -111,8 +123,6 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                     print("Не смог скачать data")
                     return
                 }
-                ///записываем data в FileManager
-                self.fileManager.createFile(atPath: documentsURL.appendingPathComponent(nameAndExt).path, contents: data)// в YouOn он зачем-то записывает файл сначала в FileManager...
 
                 let statusCode = response.statusCode
                 if statusCode < 200 && statusCode > 299 {//прокидывать ошибку не дает dataTask
@@ -129,13 +139,31 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                         try PHPhotoLibrary.shared().performChangesAndWait {
                             let request = PHAssetCreationRequest.forAsset()
                             request.addResource(with: .video, fileURL: fileURLwithNameAndExt, options: nil) // бывает вариант с data
-                            if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
-                                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления (видео не удается удалять из PhotoLibrary, а фото удаляет)
-                                print("VideoASSET_ID is = \(assetID)")
-                            }
+                            self.assetID = request.placeholderForCreatedAsset?.localIdentifier
+                            print("VideoASSET_ID is = \(String(describing: self.assetID))")
                         }
-                        self.statusClosure?(State.loadedAndSaved)
+                        ///нужную инфо о видео упорядочили в структуру
+                        self.videoItemWithData = VideoItemData(name: nameAndExt,
+                                                               fileURL: fileURLwithNameAndExt,
+                                                               assetID:  self.assetID,
+                                                               dateOfDownload: Date())
+                        ///энкодируем модель данных в Data, чтобы потом записать в FileManager
+                        do {
+                            self.encodedVideoItemData = try self.mapper.encode(from: self.videoItemWithData)
+                        } catch {
+                            print("\(MapperError.failAtParsing(reason: "Не смог энкодировать в Data"))")
+                        }
 
+                        ///сохраняем encodedVideoItemData в FileManager
+                        if let data = self.encodedVideoItemData {
+                            do {
+                                try data.write(to: fileURLwithNameAndExt)
+                            } catch {
+                                print("Error saving data to FileManager: \(error.localizedDescription)")
+                            }
+                            self.statusClosure?(State.loadedAndSaved)
+                        }
+#error("сохранил encodedVideoItemData в FileManager, далее где будем применять данные - достаем из FileManager, декодируем в secondViewModel в UIMediaItem или в массив их, и потом во VC подставляем в ячейку по indexPathl; также надо создать ячейку")
                     case .photo:
                         try PHPhotoLibrary.shared().performChangesAndWait {
                             let request = PHAssetCreationRequest.forAsset()
@@ -143,6 +171,7 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                             if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
                                 self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления
                                 print("PhotoASSET_ID is = \(assetID)")
+
                             }
                         }
                     }

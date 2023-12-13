@@ -8,21 +8,37 @@
 import Foundation
 
 protocol MapperProtocol {
+    func encode<T: Encodable>(from someStruct: T) throws -> Data
     func decode<T: Decodable>(from data: Data, toStruct: T.Type) throws -> T
+    
 }
 
 final class DataMapper {
+
+    private lazy var encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        return encoder
+    }()
 
     private lazy var decoder: JSONDecoder = {
         let decoder = JSONDecoder()
 //        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
+
 }
 
 
 // MARK: - Extensions
 extension DataMapper: MapperProtocol {
+    func encode<T: Encodable>(from someStruct: T) throws -> Data {
+        do {
+            let modelEncodedToData = try self.encoder.encode(someStruct)
+            return modelEncodedToData
+        } catch {
+            throw error
+        }
+    }
 
     func decode<T: Decodable>(from data: Data, toStruct: T.Type) throws -> T {
         do {

@@ -19,7 +19,7 @@ protocol FirstVCViewModelProtocol: AnyObject {
 }
 
 // MARK: - Enum
-enum State { //дописать
+enum State { 
     case none
     case processing
     case fileExists
@@ -31,17 +31,9 @@ enum State { //дописать
 
 final class FirstViewModel {
     
-    
     // MARK: - Public properties
     var closureChangingState: ((State) -> Void)?
     let fManager: LocalFilesManagerProtocol
-
-//    var closureChangingProgress: ((Float) -> Void)?
-//    var progress: Float = 0.0 {
-//        didSet {
-//            closureChangingProgress?(progress)
-//        }
-//    }
 
     var state: State = .none {
         didSet {
@@ -53,12 +45,12 @@ final class FirstViewModel {
     var photoURL: URL?
     
     // MARK: - Private properties
-    private weak var coordinator: FirstScreenCoordinator?
+    private weak var coordinator: VideoFlowCoordinator?
     private let networkService: YTNetworkServiceProtocol
     
     
     // MARK: - Init
-    init(coordinator: FirstScreenCoordinator, networkService:YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
+    init(coordinator: VideoFlowCoordinator, networkService:YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
         self.coordinator = coordinator
         self.networkService = networkService
         self.fManager = fManager
@@ -66,12 +58,8 @@ final class FirstViewModel {
     
     // MARK: - Public methods
     func showSecondVC() {
-        coordinator?.pushSecondVC(deleteDetegate: self)
+        coordinator?.pushSecondVC(emptyVideoDelegate: self)
     }
-//    func updateProgress(_ progress: Float) {
-//        self.progress = progress
-//        closureChangingProgress?(progress)
-//    }
     
     // MARK: - Private methods
     
@@ -103,8 +91,6 @@ extension FirstViewModel: NetworkAPIProtocol {
                     case .badURL(alertText: let alertTextForUser):
                         self?.state = .badURL(alertText: alertTextForUser)
 
-                    case .thereIsNoAnyVideo:
-                        ()
                     default: print("зашел в дефолтный кейс fManagerА")
                     }
                 }
@@ -119,11 +105,11 @@ extension FirstViewModel: NetworkAPIProtocol {
     }
 }
 
+// MARK: - EmptyVideoDelegateProtocol
+extension FirstViewModel: EmptyVideoDelegateProtocol {
 
-extension FirstViewModel: DeleteDelegate {
-    func organizeAlertAfterDeletion() {
-        
+    func organizeAlertOfNoVideo() {
+        self.state = .thereIsNoAnyVideo
     }
-    
-    
+
 }

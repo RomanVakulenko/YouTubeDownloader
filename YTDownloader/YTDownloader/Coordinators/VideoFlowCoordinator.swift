@@ -1,5 +1,5 @@
 //
-//  FirstScreenCoordinator.swift
+//  VideoFlowCoordinator.swift
 //  YTDownloader
 //
 //  Created by Roman Vakulenko on 26.11.2023.
@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-protocol FirstScreenCoordinatorProtocol: AnyObject {
-    func pushSecondVC(deleteDetegate: DeleteDelegate)
+protocol FlowCoordinatorProtocol: AnyObject {
+    func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol)
     func popToRootVC()
 }
 
 
-final class FirstScreenCoordinator {
+final class VideoFlowCoordinator {
 
     // MARK: - Private properties
     private var navigationController: UINavigationController
@@ -26,7 +26,7 @@ final class FirstScreenCoordinator {
 
     // MARK: - Private methods
     private func createFirstVC() -> UIViewController {
-        let fileManager = LocalFilesManager()
+        let fileManager = LocalFilesManager(mapper: DataMapper())
         let networkService = YTNetworkService(manager: fileManager)
         let viewModel = FirstViewModel(coordinator: self,
                                        networkService: networkService,
@@ -37,8 +37,11 @@ final class FirstScreenCoordinator {
         return navigationController
     }
 
-    private func createSecondVC(deleteDetegate: DeleteDelegate) -> UIViewController {
-        let viewModel = SecondViewModel(coordinator: self, delDelegate: deleteDetegate)
+    private func createSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) -> UIViewController {
+        let fileManager = LocalFilesManager(mapper: DataMapper())
+        let viewModel = SecondViewModel(fManager: fileManager,
+                                        coordinator: self,
+                                        emptyVideoAlertDelegate: emptyVideoDelegate)
         let vc = SecondVC(viewModel: viewModel)
         return vc
     }
@@ -46,16 +49,19 @@ final class FirstScreenCoordinator {
 }
 
 // MARK: - CoordinatorProtocol
-extension FirstScreenCoordinator: CoordinatorProtocol {
+extension VideoFlowCoordinator: CoordinatorProtocol {
     func start() -> UIViewController {
         let vc = createFirstVC()
         return vc
     }
 }
 
-extension FirstScreenCoordinator: FirstScreenCoordinatorProtocol {
-    func pushSecondVC(deleteDetegate: DeleteDelegate) {
-        let secondVC = createSecondVC(deleteDetegate: deleteDetegate)
+
+// MARK: - FlowCoordinatorProtocol
+extension VideoFlowCoordinator: FlowCoordinatorProtocol {
+
+    func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) {
+        let secondVC = createSecondVC(emptyVideoDelegate: emptyVideoDelegate)
         navigationController.pushViewController(secondVC, animated: true)
         
     }
