@@ -6,10 +6,10 @@
 //
 
 import Foundation
-
+///поскольку скачанных видео может быть много, то кодируем [dataModels] и декодируем тоже в массив
 protocol MapperProtocol {
-    func encode<T: Encodable>(from someStruct: T) throws -> Data
-    func decode<T: Decodable>(from data: Data, toStruct: T.Type) throws -> T
+    func encode<T: Encodable>(from someArrStruct: [T]) throws -> Data
+    func decode<T: Decodable>(from data: Data, toArrStruct: [T].Type) throws -> [T]
     
 }
 
@@ -31,23 +31,23 @@ final class DataMapper {
 
 // MARK: - Extensions
 extension DataMapper: MapperProtocol {
-    func encode<T: Encodable>(from someStruct: T) throws -> Data {
+    func encode<T: Encodable>(from someArrStruct: [T]) throws -> Data {
         do {
-            let modelEncodedToData = try self.encoder.encode(someStruct)
-            return modelEncodedToData
+            let modelsArrEncodedToData = try self.encoder.encode(someArrStruct)
+            return modelsArrEncodedToData
         } catch {
             throw error
         }
     }
 
-    func decode<T: Decodable>(from data: Data, toStruct: T.Type) throws -> T {
+    func decode<T: Decodable>(from data: Data, toArrStruct: [T].Type) throws -> [T] {
         do {
-            let decodedModel = try self.decoder.decode(toStruct, from: data)
+            let decodedModel = try self.decoder.decode(toArrStruct, from: data)
             return decodedModel
         } catch let error as DecodingError {
             // Чтобы узнать место появления ошибки так делают??
             let errorLocation = "in File: \(#file), at Line: \(#line), Column: \(#column)"
-            throw MapperError.failAtParsing(reason: "\(error), \(errorLocation)")
+            throw MapperError.failAtMapping(reason: "\(error), \(errorLocation)")
         } catch {
             print("Unknown error have been caught in File: \(#file), at Line: \(#line), Column: \(#column)")
             throw error

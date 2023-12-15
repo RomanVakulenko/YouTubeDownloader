@@ -70,7 +70,7 @@ final class FirstVC: UIViewController {
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 0.6
         button.layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        button.addTarget(self, action: #selector(showHistory(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapDownloadedVideo(_:)), for: .touchUpInside)
         return button
     }()
 
@@ -194,7 +194,7 @@ final class FirstVC: UIViewController {
 
                     case .loadedAndSaved:
                         strongSelf.boxProgressView.isHidden = true
-                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved to History")
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved")
 
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
@@ -226,7 +226,7 @@ final class FirstVC: UIViewController {
         }
     }
 
-    @objc private func showHistory(_ sender: UIButton) {
+    @objc private func didTapDownloadedVideo(_ sender: UIButton) {
         viewModel.showSecondVC()
     }
 

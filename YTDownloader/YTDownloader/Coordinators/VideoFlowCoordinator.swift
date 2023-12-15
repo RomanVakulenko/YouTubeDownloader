@@ -38,10 +38,8 @@ final class VideoFlowCoordinator {
     }
 
     private func createSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) -> UIViewController {
-        let fileManager = LocalFilesManager(mapper: DataMapper())
-        let viewModel = SecondViewModel(fManager: fileManager,
-                                        coordinator: self,
-                                        emptyVideoAlertDelegate: emptyVideoDelegate)
+        let viewModel = SecondViewModel(emptyVideoAlertDelegate: emptyVideoDelegate,
+                                        mapper: DataMapper())
         let vc = SecondVC(viewModel: viewModel)
         return vc
     }
@@ -63,7 +61,6 @@ extension VideoFlowCoordinator: FlowCoordinatorProtocol {
     func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) {
         let secondVC = createSecondVC(emptyVideoDelegate: emptyVideoDelegate)
         navigationController.pushViewController(secondVC, animated: true)
-        
     }
 
     func popToRootVC() {

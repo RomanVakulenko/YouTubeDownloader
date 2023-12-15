@@ -14,35 +14,42 @@ protocol EmptyVideoDelegateProtocol: AnyObject {
     func organizeAlertOfNoVideo()
 }
 
+protocol SecondViewModelGetVideoProtocol: AnyObject {
+
+}
 
 final class SecondViewModel {
 
     // MARK: - Public properties
     var videos: [MediaItemProtocol] = []
-    let fManager: LocalFilesManagerProtocol
 
     // MARK: - Private properties
-    private var coordinator: VideoFlowCoordinator?
     private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
+    private let mapper: MapperProtocol
 
 
     // MARK: - Init
-    init(fManager: LocalFilesManagerProtocol, coordinator: VideoFlowCoordinator?, emptyVideoAlertDelegate: EmptyVideoDelegateProtocol?) {
-        self.fManager = fManager
-        self.coordinator = coordinator
+    init(emptyVideoAlertDelegate: EmptyVideoDelegateProtocol?, mapper: MapperProtocol) {
         self.emptyVideoDelegate = emptyVideoAlertDelegate
+        self.mapper = mapper
     }
 
     // MARK: - Public methods
-    func createVideosCollection() {
-
+    func makeVideosArrForUI() {
+        do {
+            ///достаем из FileManager [VideoItemData] как data  и  декодруем в [UIMediaItem]
+            let data = try Data(contentsOf: JsonModelsURL.inFM)
+            videos = try mapper.decode(from: data, toArrStruct: [UIMediaItem].self)
+        } catch {
+            print(NetworkManagerErrors.mapperErrors(error: .failAtMapping(reason: "1st launch or Ошибка конвертации из ФC в data или декодирования в [UIMediaItem]")))
+        }
     }
 
-    func deleteVideoAt(_ indexPath: IndexPath) {
-        //обратиться к хранилищу и удалить оттуда
-
-        coordinator?.popToRootVC()
-    }
+    //    func deleteVideoAt(_ indexPath: IndexPath) {
+    //        //обратиться к хранилищу и удалить оттуда
+    //
+    //        coordinator?.popToRootVC()
+    //    }
 
     //запускать, когда 2 контроллер уходит с экрана
     func informIfNoVideo() {
