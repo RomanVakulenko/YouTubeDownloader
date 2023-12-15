@@ -46,16 +46,12 @@ final class SecondVC: UIViewController {
         super.viewDidLoad()
         setupView()
         layout()
-        loadVideos()
+        viewModel.makeVideosArrForUI()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-//        playlistManager.audioPlayer.pause() ??остановить воспроизведение
     }
 
     // MARK: - Private methods
@@ -73,16 +69,6 @@ final class SecondVC: UIViewController {
         ])
     }
 
-    func loadVideos() {
-            let fetchOptions = PHFetchOptions()
-            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .video, options: fetchOptions)
-            fetchResult.enumerateObjects { [weak self] asset, _, _ in
-                self?.viewModel.videos.append(asset)
-            }
-            collectionView.reloadData()
-    }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -93,6 +79,7 @@ extension SecondVC: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
+
         cell.configure(with: viewModel.videos[indexPath.row])
 
         return cell

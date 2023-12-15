@@ -17,7 +17,7 @@ final class MainCoordinator {
     // MARK: - Private methods
     /// т.к. координатор может состоять из кучи объектов, то лучше обернуть в метод
     private func makeFirstScreenCoordinator() -> CoordinatorProtocol {
-        let coordinator = FirstScreenCoordinator(navigationController: UINavigationController())
+        let coordinator = VideoFlowCoordinator(navigationController: UINavigationController())
         return coordinator
     }
     /// сравниваем адреса памяти, ссылается ли объект на тот же адрес памяти (т.е. до тех пор пока координаторов нет - добавляй их)

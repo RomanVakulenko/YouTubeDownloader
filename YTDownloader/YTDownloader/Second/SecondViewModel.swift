@@ -10,31 +10,51 @@ import UIKit
 import Photos
 
 
-protocol DeleteDelegate: AnyObject {
-    func organizeAlertAfterDeletion()
+protocol EmptyVideoDelegateProtocol: AnyObject {
+    func organizeAlertOfNoVideo()
+}
+
+protocol SecondViewModelGetVideoProtocol: AnyObject {
+
 }
 
 final class SecondViewModel {
 
-//    private(set) var ytModel: [VideoForUI] = []
-    var videos: [PHAsset] = []
+    // MARK: - Public properties
+    var videos: [MediaItemProtocol] = []
 
     // MARK: - Private properties
-    private var coordinator: FirstScreenCoordinator?
-    private weak var delDelegate: DeleteDelegate?
+    private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
+    private let mapper: MapperProtocol
+
 
     // MARK: - Init
-    init(coordinator: FirstScreenCoordinator, delDelegate: DeleteDelegate) {
-        self.coordinator = coordinator
-        self.delDelegate = delDelegate
+    init(emptyVideoAlertDelegate: EmptyVideoDelegateProtocol?, mapper: MapperProtocol) {
+        self.emptyVideoDelegate = emptyVideoAlertDelegate
+        self.mapper = mapper
     }
 
     // MARK: - Public methods
-    func deleteVideoAt(_ indexPath: IndexPath) { //?? как узнать в какой ячейке нажали на корзину?
-        //обратиться к хранилищу и удалить оттуда
-
-
-        coordinator?.popToRootVC()
+    func makeVideosArrForUI() {
+        do {
+            ///достаем из FileManager [VideoItemData] как data  и  декодруем в [UIMediaItem]
+            let data = try Data(contentsOf: JsonModelsURL.inFM)
+            videos = try mapper.decode(from: data, toArrStruct: [UIMediaItem].self)
+        } catch {
+            print(NetworkManagerErrors.mapperErrors(error: .failAtMapping(reason: "1st launch or Ошибка конвертации из ФC в data или декодирования в [UIMediaItem]")))
+        }
     }
 
+    //    func deleteVideoAt(_ indexPath: IndexPath) {
+    //        //обратиться к хранилищу и удалить оттуда
+    //
+    //        coordinator?.popToRootVC()
+    //    }
+
+    //запускать, когда 2 контроллер уходит с экрана
+    func informIfNoVideo() {
+        if videos.isEmpty {
+            emptyVideoDelegate?.organizeAlertOfNoVideo()
+        }
+    }
 }

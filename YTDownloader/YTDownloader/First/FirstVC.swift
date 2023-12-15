@@ -65,12 +65,12 @@ final class FirstVC: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemGray6
-        button.setTitle("History", for: .normal)
+        button.setTitle("Downloaded video", for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 0.6
         button.layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        button.addTarget(self, action: #selector(showHistory(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapDownloadedVideo(_:)), for: .touchUpInside)
         return button
     }()
 
@@ -162,7 +162,7 @@ final class FirstVC: UIViewController {
 
             historyButton.topAnchor.constraint(equalTo: referenceTextField.bottomAnchor, constant: Constants.headerHeight*2),
             historyButton.centerXAnchor.constraint(equalTo: baseView.centerXAnchor),
-            historyButton.widthAnchor.constraint(equalToConstant: Constants.headerHeight * 2),
+            historyButton.widthAnchor.constraint(equalToConstant: Constants.headerHeight * 3),
             historyButton.heightAnchor.constraint(equalToConstant: Constants.buttonSize * 1.32)
         ])
     }
@@ -194,7 +194,7 @@ final class FirstVC: UIViewController {
 
                     case .loadedAndSaved:
                         strongSelf.boxProgressView.isHidden = true
-                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved to History")
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved")
 
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
@@ -226,7 +226,7 @@ final class FirstVC: UIViewController {
         }
     }
 
-    @objc private func showHistory(_ sender: UIButton) {
+    @objc private func didTapDownloadedVideo(_ sender: UIButton) {
         viewModel.showSecondVC()
     }
 

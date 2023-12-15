@@ -12,33 +12,15 @@ import Photos
 
 final class CellForSecondVC: UICollectionViewCell {
 
-//    private var videoModel: VideoForUI?
-
-//    var playerViewController = AVPlayerViewController()
+    private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
-
-    private lazy var baseView: UIView = {
-        let base = UIView()
-        base.translatesAutoresizingMaskIntoConstraints = false
-        return base
-    }()
-
+    private var urlToVideoInFM: URL?
+    
     private lazy var videoView: UIView = {
         let videoView = UIView()
         videoView.translatesAutoresizingMaskIntoConstraints = false
-//        let frame = UIView(frame: CGRect(x: 0, y: 95, width: screenWidth, height: 211))
-//            let videoURL = URL(string: "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-//            let player = AVPlayer(url: videoURL!)
-//            let video = AVPlayerViewController()
-//            video.player = player
-//            video.view.frame = frame.bounds
-//            frame.addSubview(video.view)
-//            video.player?.play()
-//            return frame
         return videoView
     }()
-
-
 
     private lazy var playButton: UIButton = {
         let button = UIButton()
@@ -65,6 +47,7 @@ final class CellForSecondVC: UICollectionViewCell {
         return label
     }()
 
+
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -76,63 +59,39 @@ final class CellForSecondVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Public methods
-    func configureWith(model: VideoForUI) {
-//        self.videoModel = model.video//??как присвоить видео из realm
-//        self.dateLabel = model.date //??нужен еще форматтер
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = bounds
     }
 
-    func configure(with asset: PHAsset) {
-            let options = PHVideoRequestOptions()
-            options.deliveryMode = .automatic
-            PHImageManager.default().requestPlayerItem(forVideo: asset, options: options) { [weak self] playerItem, _ in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    let player = AVPlayer(playerItem: playerItem)
-                    self.playerLayer = AVPlayerLayer(player: player)
-                    self.playerLayer?.frame = self.contentView.bounds
-                    self.contentView.layer.addSublayer(self.playerLayer!)
-                    player.play()
-                }
-            }
-        }
+    // MARK: - Public methods
+    ///c помощью UIMediaItem, которая  имеет date и URL  к mp4 в FileManager
+    func configure(with uiMediaItem: MediaItemProtocol?) {
 
-//    func playVideoFromGallery() {
-//            let fetchOptions = PHFetchOptions()
-//            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-//            let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: .video, options: fetchOptions)
-//            if let lastAsset = fetchResult.firstObject {
-//                PHImageManager.default().requestPlayerItem(forVideo: lastAsset, options: nil) { (playerItem, info) in
-//                    DispatchQueue.main.async {
-//                        self.playerViewController.player = AVPlayer(playerItem: playerItem)
-//                        self.present(self.playerViewController, animated: true) {
-//                            self.playerViewController.player?.play()
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        if let uiModel = uiMediaItem {
+            urlToVideoInFM = uiModel.mp4URLInFileManager //это путь до mp4 видеофайла, который лежит в FileManager
+            dateLabel.text = DateManager.createStringFromDate(uiModel.dateOfDownload, andFormatTo: "dd.MM.yy")
+        }
+    }
 
 
     // MARK: - Private methods
     private func setupView() {
-        [videoView, playButton, deleteButton, dateLabel].forEach { baseView.addSubview($0) }
-        contentView.addSubview(baseView)
-        contentView.backgroundColor = .gray
-    }
+//        if let playerLayer = playerLayer {
+//            videoView.layer.addSublayer(playerLayer)
+//            playerLayer.frame.size = videoView.bounds.size
+//        }
 
+        [videoView, playButton, deleteButton, dateLabel].forEach { contentView.addSubview($0) }
+        contentView.backgroundColor = .lightGray
+    }
     private func layout() {
         NSLayoutConstraint.activate([
-            baseView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            baseView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            baseView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            baseView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-
-            videoView.leadingAnchor.constraint(equalTo: baseView.leadingAnchor),
-            videoView.trailingAnchor.constraint(equalTo: baseView.trailingAnchor),
-            videoView.topAnchor.constraint(equalTo: baseView.topAnchor),
-            videoView.bottomAnchor.constraint(equalTo: baseView.bottomAnchor),
-
+            videoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            videoView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            videoView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            videoView.heightAnchor.constraint(equalToConstant: playerLayer?.bounds.height ?? contentView.bounds.height * 1),
+            
             playButton.centerXAnchor.constraint(equalTo: videoView.centerXAnchor),
             playButton.centerYAnchor.constraint(equalTo: videoView.centerYAnchor),
             playButton.widthAnchor.constraint(equalToConstant: Constants.buttonSize),
@@ -151,14 +110,25 @@ final class CellForSecondVC: UICollectionViewCell {
     }
 
     // MARK: - Actions
-    @objc func didTapPlay(_ sender: UIButton) {
-        guard let videoURL = URL(string: "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4") else { return }
-                let player = AVPlayer(url: videoURL)
-                let playerViewController = AVPlayerViewController()
-                playerViewController.player = player
-                UIApplication.shared.windows.first?.rootViewController?.present(playerViewController, animated: true) {
-                    player.play()
-                }
+//    @objc func didTapPlay(_ sender: UIButton) { //Если надо, чтобы только внутри ячейки, то использовать AVPlayer
+//        guard let url = urlToVideoInFM else { return }
+//
+//        let playerItem = AVPlayerItem(url: url)  //заставки также нет и видео не проигрывается
+//        player = AVPlayer(playerItem: playerItem)
+//        playerLayer = AVPlayerLayer(player: player)
+//        playerLayer?.frame = videoView.bounds
+//        videoView.layer.addSublayer(playerLayer!)
+//        player?.play()
+//    }
+
+    @objc func didTapPlay(_ sender: UIButton) { //а так на весь экран плеер открывается
+        guard let url = urlToVideoInFM else { return }
+        let player = AVPlayer(url: url)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = player
+        UIApplication.shared.keyWindow?.rootViewController?.present(playerViewController, animated: true) {
+            playerViewController.player?.play()
+        }
     }
 
     @objc func didTapDelete(_ sender: UIButton) {

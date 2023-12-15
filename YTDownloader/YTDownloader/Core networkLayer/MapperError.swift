@@ -8,11 +8,11 @@
 import Foundation
 
 enum MapperError: Error, CustomStringConvertible {
-    case failAtParsing(reason: String)
+    case failAtMapping(reason: String)
 
     var description: String {
         switch self {
-        case .failAtParsing(let reason):
+        case .failAtMapping(let reason):
             return reason
         }
     }

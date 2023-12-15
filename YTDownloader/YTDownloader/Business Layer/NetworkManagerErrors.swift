@@ -11,6 +11,7 @@ import UIKit
 enum NetworkManagerErrors: Error, CustomStringConvertible {
     case show
     case networkRouterErrors(error: RouterErrors)
+    case mapperErrors(error: MapperError)
     case fileManagerErrors(error: FileManagerErrors)
 
     var description: String {
@@ -19,6 +20,8 @@ enum NetworkManagerErrors: Error, CustomStringConvertible {
             return "some error"
         case .networkRouterErrors(error: let error):
             return error.description
+        case .mapperErrors(error: let error):
+            return error.description
         case .fileManagerErrors(error: let error):
             return error.description
         }
@@ -26,13 +29,13 @@ enum NetworkManagerErrors: Error, CustomStringConvertible {
 
     var descriptionForUser: String {
         switch self {
-        case .networkRouterErrors(let error):
-            switch error {
-            case .noInternetConnection:
-                return error.description //должен увидеть реальную ошибку
-            default:
-                return "Ошибка соединения с сервером"
-            }
+//        case .networkRouterErrors(let error):
+//            switch error {
+//            case .noInternetConnection:
+//                return error.description //если отловить NSURLErrorBadURL (и подобные) - должен увидеть реальную ошибку
+//            default:
+//                return "Ошибка соединения с сервером"
+//            }
         default:
             return "Ошибка соединения с сервером"
         }

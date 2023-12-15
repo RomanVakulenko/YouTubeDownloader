@@ -28,6 +28,7 @@ final class YTNetworkService {
     private let manager: LocalFilesManagerProtocol
 
     init(manager: LocalFilesManagerProtocol) {
+
         self.manager = manager
     }
 
@@ -43,9 +44,9 @@ final class YTNetworkService {
                 return
             }
             onCompleted(video)
+            print("XCDYouTubeClient ------ \(video)")//если навести на video и нажать i, то выведет(смЗаметки)
         }
     }
-
 
 }
 
@@ -73,8 +74,13 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         return
                     }
 
-                    try self.manager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
+//без загрузки фото запрос системы на разрешение работать с фото библиотекой не прерывает изменение прогерраса загрузки (если же метод загрузки фото включить, то он отрабатывает быстрее и системное уведомление выскакивает как раз на моменте загрузки видео  и это прерывает показ прогресса загрузки видео), даже group + Operation не помогли...возможно дело в коде метода downloadFileAndSaveToPhotoGallery...оставил - тоже часа 3 отняло...
                     try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: self.photoURL!, filename: self.fileName!, extension: "jpg")
+
+//вообще, вроде бы, плеер сам показывает первый кадр видео как превью/заставка (пока еще не делал плеер)
+
+                    try self.manager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
+
                 } catch let error as RouterErrors {
                     throw NetworkManagerErrors.networkRouterErrors(error: error)
                 }
