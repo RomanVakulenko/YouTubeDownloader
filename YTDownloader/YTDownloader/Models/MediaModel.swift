@@ -11,7 +11,7 @@ protocol MediaItemProtocol: Any {
     var name: String { get set }
     var mp4URLInFileManager: URL { get set }
     var thumbnailURL: URL? { get set }
-//    var assetID: String? { get set }
+    var assetID: String? { get set }
     var dateOfDownload: Date { get set }
 }
 
@@ -21,7 +21,7 @@ struct VideoItemData: Codable, MediaItemProtocol {
     var name: String
     var mp4URLInFileManager: URL
     var thumbnailURL: URL?
-//    var assetID: String?
+    var assetID: String?
     var dateOfDownload: Date
 }
 
@@ -31,14 +31,14 @@ struct UIMediaItem: Decodable, Equatable, MediaItemProtocol {
     var name: String
     var mp4URLInFileManager: URL
     var thumbnailURL: URL?
-//    var assetID: String?
+    var assetID: String?
     var dateOfDownload: Date
 
     init(model: MediaItemProtocol) {
         self.name = model.name
         self.mp4URLInFileManager = model.mp4URLInFileManager
         self.thumbnailURL = model.thumbnailURL
-//        self.assetID = model.assetID
+        self.assetID = model.assetID
         self.dateOfDownload = model.dateOfDownload
     }
 }

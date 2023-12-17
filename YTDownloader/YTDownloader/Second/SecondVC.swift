@@ -74,13 +74,13 @@ final class SecondVC: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension SecondVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.videos.count
+        return viewModel.videos?.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
 
-        cell.configure(with: viewModel.videos[indexPath.row])
+        cell.configure(with: viewModel.videos?[indexPath.row])
 
         return cell
     }

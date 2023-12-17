@@ -21,7 +21,7 @@ protocol SecondViewModelGetVideoProtocol: AnyObject {
 final class SecondViewModel {
 
     // MARK: - Public properties
-    var videos: [MediaItemProtocol] = []
+    var videos: [MediaItemProtocol]?
 
     // MARK: - Private properties
     private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
@@ -40,6 +40,7 @@ final class SecondViewModel {
             ///достаем из FileManager [VideoItemData] как data  и  декодруем в [UIMediaItem]
             let data = try Data(contentsOf: JsonModelsURL.inFM)
             videos = try mapper.decode(from: data, toArrStruct: [UIMediaItem].self)
+            print(videos)
         } catch {
             print(NetworkManagerErrors.mapperErrors(error: .failAtMapping(reason: "1st launch or Ошибка конвертации из ФC в data или декодирования в [UIMediaItem]")))
         }
@@ -53,8 +54,9 @@ final class SecondViewModel {
 
     //запускать, когда 2 контроллер уходит с экрана
     func informIfNoVideo() {
-        if videos.isEmpty {
-            emptyVideoDelegate?.organizeAlertOfNoVideo()
-        }
+
+//        if videos.isEmpty {
+//            emptyVideoDelegate?.organizeAlertOfNoVideo()
+//        }
     }
 }

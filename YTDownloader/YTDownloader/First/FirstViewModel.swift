@@ -68,38 +68,35 @@ final class FirstViewModel {
 
 // MARK: - FirstVCViewModelProtocol
 extension FirstViewModel: NetworkAPIProtocol {
-    
-    @MainActor
+
     func downloadVideo(at videoID: String, and url: URL) {
         state = .processing //сразу после того как нажали на download
 
-        Task {
-            do {
-                try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url)
-                
-                fManager.statusClosure = { [weak self] status in
-                    switch status {
-                    case .fileExists:
-                        self?.state = .fileExists
+        do {
+            try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url)
 
-                    case .loading:
-                        self?.state = .loading
+            fManager.statusClosure = { [weak self] status in
+                switch status {
+                case .fileExists:
+                    self?.state = .fileExists
 
-                    case .loadedAndSaved:
-                        self?.state = .loadedAndSaved
+                case .loading:
+                    self?.state = .loading
 
-                    case .badURL(alertText: let alertTextForUser):
-                        self?.state = .badURL(alertText: alertTextForUser)
+                case .loadedAndSaved:
+                    self?.state = .loadedAndSaved
 
-                    default: print("зашел в дефолтный кейс fManagerА")
-                    }
+                case .badURL(alertText: let alertTextForUser):
+                    self?.state = .badURL(alertText: alertTextForUser)
+
+                default: print("зашел в дефолтный кейс fManagerА")
                 }
-            } catch {
-                switch error {
-                case NetworkManagerErrors.networkRouterErrors(error: .fetchingXCDVideoError):
-                    print("XCDYouTubeVideo не смог сделать URL для загрузки с инета")
-                default: print(error.localizedDescription)
-                }
+            }
+        } catch {
+            switch error {
+            case NetworkManagerErrors.networkRouterErrors(error: .fetchingXCDVideoError):
+                print("XCDYouTubeVideo не смог сделать URL для загрузки с инета")
+            default: print(error.localizedDescription)
             }
         }
     }
