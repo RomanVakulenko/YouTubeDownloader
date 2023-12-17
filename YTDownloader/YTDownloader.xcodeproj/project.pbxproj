@@ -488,7 +488,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "YTDowloader requires access to the Photo Library to add files";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDowloader requires access to the Photo Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDownloader requires accsess to Photo Library";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -519,7 +519,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "YTDowloader requires access to the Photo Library to add files";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDowloader requires access to the Photo Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "YTDownloader requires accsess to Photo Library";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

@@ -27,7 +27,7 @@ final class VideoFlowCoordinator {
     // MARK: - Private methods
     private func createFirstVC() -> UIViewController {
         let fileManager = LocalFilesManager(mapper: DataMapper())
-        let networkService = YTNetworkService(manager: fileManager)
+        let networkService = YTNetworkService(manager: fileManager, mapper: DataMapper())
         let viewModel = FirstViewModel(coordinator: self,
                                        networkService: networkService,
                                        fManager: fileManager)

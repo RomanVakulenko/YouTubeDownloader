@@ -30,12 +30,12 @@ final class LocalFilesManager {
 
     var statusClosure: ((State) -> Void)?
     var progressClosure: ((Float) ->Void)?
-    var dataModel: VideoItemData?
-    var dataModelsForSavingIntoFM: [VideoItemData] = [] {
-        didSet {
-            encodeAndSaveToFM(videoItemData: dataModelsForSavingIntoFM)
-        }
-    }
+//    var dataModel: VideoItemData?
+//    var dataModelsForSavingIntoFM: [VideoItemData] = [] {
+//        didSet {
+//            encodeAndSaveToFM(videoItemData: dataModelsForSavingIntoFM)
+//        }
+//    }
     var assetID: String?
 
     // MARK: - Private properties
@@ -45,13 +45,13 @@ final class LocalFilesManager {
     // MARK: - Init
     init(mapper: MapperProtocol) {
         self.mapper = mapper
-        do {
-            let data = try Data(contentsOf: JsonModelsURL.inFM)
-            dataModelsForSavingIntoFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
-        }
-        catch {
-            print("1st launch or Error decoding data from FileManager into dataModels", error)
-        }
+//        do {
+//            let data = try Data(contentsOf: JsonModelsURL.inFM)
+//            dataModelsForSavingIntoFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
+//        }
+//        catch {
+//            print("1st launch or Error decoding data from FileManager into dataModels", error)
+//        }
     }
 
     // MARK: - Public methods
@@ -78,16 +78,16 @@ final class LocalFilesManager {
     }
 
     // MARK: - Private methods
-    private func encodeAndSaveToFM(videoItemData: [VideoItemData]) {
-        do {
-            ///делаем data из [VideoItemData]
-            let data = try mapper.encode(from: videoItemData)
-            ///сохраняем в FM по уникальному url
-            try data.write(to: JsonModelsURL.inFM)
-        } catch {
-            print("Error saving data to FileManager: \(error.localizedDescription)")
-        }
-    }
+//    private func encodeAndSaveToFM(videoItemData: [VideoItemData]) {
+//        do {
+//            ///делаем data из [VideoItemData]
+//            let data = try mapper.encode(from: videoItemData)
+//            ///сохраняем в FM по уникальному url
+//            try data.write(to: JsonModelsURL.inFM)
+//        } catch {
+//            print("Error saving data to FileManager: \(error.localizedDescription)")
+//        }
+//    }
 
     deinit {
         observation?.invalidate()
@@ -123,12 +123,12 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
 //                throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
 //            }
 //        } else {
+            self.observation?.invalidate()
             if file  == .video {
                 self.statusClosure?(State.loading)
             }
             let urlRequest = URLRequest(url: wwwlink)
             let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
-                self.observation?.invalidate()
                 guard let data,
                       let response = response as? HTTPURLResponse else {
                     print("Не смог скачать data")
@@ -155,34 +155,21 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                             request.addResource(with: .video, fileURL: urlOfMp4SavedInFM, options: nil) // бывает вариант с data
                             self.assetID = request.placeholderForCreatedAsset?.localIdentifier
                         }
-
-
                         self.statusClosure?(State.loadedAndSaved)
-
-
                     case .photo:
-                        try PHPhotoLibrary.shared().performChangesAndWait {
-                            let request = PHAssetCreationRequest.forAsset()
-                            request.addResource(with: .photo, data: data, options: nil)
-                            if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
-                                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления
-                                print("PhotoASSET_ID is = \(assetID)")
-
-                            }
-                        }
+                        print("Заставку не сохраняем в ФОТО, иначе, в момент сохранения при первом запуске, онлайн изменение полоски progress'a не показывается - его сбивает системный запрос на работу с PhotoLibrary")
                     }
 
-
-                    ///нужную инфо о видео упорядочиваем в dataModel
-                    let dataModel = VideoItemData(
-                        name: nameAndExt,
-                        mp4URLInFileManager: urlWithPath,
-                        thumbnailURL: urlWithPath,
-//                          assetID:  self.assetID,
-                        dateOfDownload: Date())
-
-                    ///dataModel добавляем в массив, массив кодируем в data и сохраняем в FM
-                    self.dataModelsForSavingIntoFM.append(dataModel)
+//                    ///нужную инфо о видео упорядочиваем в dataModel
+//                    let dataModel = VideoItemData(
+//                        name: nameAndExt,
+//                        mp4URLInFileManager: urlWithPath,
+//                        thumbnailURL: nil,
+////                          assetID:  self.assetID,
+//                        dateOfDownload: Date())
+//
+//                    ///dataModel добавляем в массив, массив кодируем в data и сохраняем в FM
+//                    self.dataModelsForSavingIntoFM.append(dataModel)
 
                 } catch {
                     switch error {

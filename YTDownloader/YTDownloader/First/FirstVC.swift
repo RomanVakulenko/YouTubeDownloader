@@ -198,6 +198,7 @@ final class FirstVC: UIViewController {
 
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
+                        strongSelf.boxProgressView.isHidden = true
                         ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
                         strongSelf.referenceTextField.text = nil
 
