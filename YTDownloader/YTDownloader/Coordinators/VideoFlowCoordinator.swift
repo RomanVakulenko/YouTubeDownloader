@@ -26,11 +26,13 @@ final class VideoFlowCoordinator {
 
     // MARK: - Private methods
     private func createFirstVC() -> UIViewController {
-        let fileManager = LocalFilesManager(mapper: DataMapper())
-        let networkService = YTNetworkService(manager: fileManager, mapper: DataMapper())
+        let mapper = DataMapper()
+        let fileManager = LocalFilesManager(mapper: mapper)
+        let networkService = YTNetworkService(manager: fileManager, mapper: mapper)
         let viewModel = FirstViewModel(coordinator: self,
                                        networkService: networkService,
-                                       fManager: fileManager)
+                                       fManager: fileManager
+        )
         let firstVC = FirstVC(viewModel: viewModel)
         let navController = UINavigationController(rootViewController: firstVC)
         navigationController = navController
@@ -38,8 +40,14 @@ final class VideoFlowCoordinator {
     }
 
     private func createSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) -> UIViewController {
+
+        let mapper = DataMapper()
+        let fileManager = LocalFilesManager(mapper: mapper)
+        let networkService = YTNetworkService(manager: fileManager, mapper: mapper)
         let viewModel = SecondViewModel(emptyVideoAlertDelegate: emptyVideoDelegate,
-                                        mapper: DataMapper())
+                                        mapper: mapper,
+                                        ytNetworkService: networkService
+        )
         let vc = SecondVC(viewModel: viewModel)
         return vc
     }

@@ -10,8 +10,13 @@ import UIKit
 import AVKit
 import Photos
 
+
 final class CellForSecondVC: UICollectionViewCell {
 
+    // MARK: - Public properties
+    var didTapDeleteClosure: (() -> Void)?
+
+    // MARK: - Private properties
     private var player: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var urlToVideoInFM: URL?
@@ -29,7 +34,6 @@ final class CellForSecondVC: UICollectionViewCell {
         imageView.isHidden = false
         return imageView
     }()
-
 
     private lazy var playButton: UIButton = {
         let button = UIButton()
@@ -87,13 +91,12 @@ final class CellForSecondVC: UICollectionViewCell {
                 let time = CMTimeMake(value: 1, timescale: 2) // Здесь можно указать нужное время для получения кадра
                 if let imageRef = try? imageGenerator.copyCGImage(at: time, actualTime: nil) {
                     let thumbnail = UIImage(cgImage: imageRef)
-//                    thumbnailImageView.image = thumbnail
-
+                    //                    thumbnailImageView.image = thumbnail
 
                     if let imageData = try? Data(contentsOf: uiModel.thumbnailURL!),
                        let image = UIImage(data: imageData) {
                         thumbnailImageView.image = image
-//                    #error("по идее, в модели есть URL картинки")
+                        //                    #error("по идее, в модели есть URL картинки")
                     }
                 }
             }
@@ -104,10 +107,6 @@ final class CellForSecondVC: UICollectionViewCell {
 
     // MARK: - Private methods
     private func setupView() {
-        //        if let playerLayer = playerLayer {
-        //            videoView.layer.addSublayer(playerLayer)
-        //            playerLayer.frame.size = videoView.bounds.size
-        //        }
         videoView.addSubview(thumbnailImageView)
         [videoView, playButton, deleteButton, dateLabel].forEach { contentView.addSubview($0) }
         contentView.backgroundColor = .lightGray
@@ -142,30 +141,30 @@ final class CellForSecondVC: UICollectionViewCell {
     }
 
     // MARK: - Actions
-//    @objc func didTapPlay(_ sender: UIButton) { //Если надо, чтобы только внутри ячейки, то использовать AVPlayer
-//        thumbnailImageView.isHidden = true
-//        guard let url = urlToVideoInFM else { return }
-//
-//        let playerItem = AVPlayerItem(url: url)  //заставки также нет и видео не проигрывается
-//        player = AVPlayer(playerItem: playerItem)
-//        playerLayer = AVPlayerLayer(player: player)
-//        playerLayer?.frame = videoView.bounds
-//        videoView.layer.addSublayer(playerLayer!)
-//        player?.play()
-//    }
+    //    @objc func didTapPlay(_ sender: UIButton) { //Если надо, чтобы только внутри ячейки, то использовать AVPlayer
+    //        thumbnailImageView.isHidden = true
+    //        guard let url = urlToVideoInFM else { return }
+    //
+    //        let playerItem = AVPlayerItem(url: url)  //заставки также нет и видео не проигрывается
+    //        player = AVPlayer(playerItem: playerItem)
+    //        playerLayer = AVPlayerLayer(player: player)
+    //        playerLayer?.frame = videoView.bounds
+    //        videoView.layer.addSublayer(playerLayer!)
+    //        player?.play()
+    //    }
 
-                @objc func didTapPlay(_ sender: UIButton) { //а так на весь экран плеер открывается
-                    guard let url = urlToVideoInFM else { return }
-                    let player = AVPlayer(url: url)
-                    let playerViewController = AVPlayerViewController()
-                    playerViewController.player = player
-                    UIApplication.shared.keyWindow?.rootViewController?.present(playerViewController, animated: true) {
-                        playerViewController.player?.play()
-                    }
-                }
+    @objc func didTapPlay(_ sender: UIButton) { //а так на весь экран плеер открывается
+        guard let url = urlToVideoInFM else { return }
+        let player = AVPlayer(url: url)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = player
+        UIApplication.shared.keyWindow?.rootViewController?.present(playerViewController, animated: true) {
+            playerViewController.player?.play()
+        }
+    }
 
     @objc func didTapDelete(_ sender: UIButton) {
-
+        didTapDeleteClosure?()
     }
 
 }

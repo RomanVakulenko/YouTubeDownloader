@@ -30,12 +30,6 @@ final class LocalFilesManager {
 
     var statusClosure: ((State) -> Void)?
     var progressClosure: ((Float) ->Void)?
-//    var dataModel: VideoItemData?
-//    var dataModelsForSavingIntoFM: [VideoItemData] = [] {
-//        didSet {
-//            encodeAndSaveToFM(videoItemData: dataModelsForSavingIntoFM)
-//        }
-//    }
     var assetID: String?
 
     // MARK: - Private properties
@@ -45,17 +39,10 @@ final class LocalFilesManager {
     // MARK: - Init
     init(mapper: MapperProtocol) {
         self.mapper = mapper
-//        do {
-//            let data = try Data(contentsOf: JsonModelsURL.inFM)
-//            dataModelsForSavingIntoFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
-//        }
-//        catch {
-//            print("1st launch or Error decoding data from FileManager into dataModels", error)
-//        }
     }
 
     // MARK: - Public methods
-    func deleteFileBy(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
+    func deleteFilefromPhotoLibraryBy(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
         var assetsLocalIDs = [String]()
         let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
         guard let oneID = oneID else {
@@ -77,17 +64,17 @@ final class LocalFilesManager {
         }
     }
 
+
+
     // MARK: - Private methods
-//    private func encodeAndSaveToFM(videoItemData: [VideoItemData]) {
-//        do {
-//            ///делаем data из [VideoItemData]
-//            let data = try mapper.encode(from: videoItemData)
-//            ///сохраняем в FM по уникальному url
-//            try data.write(to: JsonModelsURL.inFM)
-//        } catch {
-//            print("Error saving data to FileManager: \(error.localizedDescription)")
-//        }
-//    }
+    private func saveVideoInPhotoLibraryWith(urlWithoutPath: URL) throws {
+        ///сохраняем в Photo Library (была  задача или из-за уведомления от системы так решил)
+        try PHPhotoLibrary.shared().performChangesAndWait {
+            let request = PHAssetCreationRequest.forAsset()
+            request.addResource(with: .video, fileURL: urlWithoutPath, options: nil) // бывает вариант с data
+            self.assetID = request.placeholderForCreatedAsset?.localIdentifier
+        }
+    }
 
     deinit {
         observation?.invalidate()
@@ -110,14 +97,14 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
 
         let nameAndExt = filename + "." + ext
         let urlOfMp4SavedInFM = documentsURL.appendingPathComponent(nameAndExt)
-//        if fileManager.fileExists(atPath: fileURLwithNameAndExt.path) {
+//        if fileManager.fileExists(atPath: urlOfMp4SavedInFM.path) {
 //            print("File already exists")
 //            if file  == .video {
 //                self.statusClosure?(State.fileExists)
 //            }
-//            self.deleteFileBy(nameAndExt)
+//            self.deleteFilefromPhotoLibraryBy(nameAndExt)
 //            do {
-//                try self.fileManager.removeItem(at: fileURLwithNameAndExt)
+//                try self.fileManager.removeItem(at: urlOfMp4SavedInFM)
 //                print("File \(nameAndExt) was removed from FileManager")
 //            } catch {
 //                throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
@@ -143,33 +130,15 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
 
                 ///Сохраняем file (mp4/jpg) в FileManager
                 self.fileManager.createFile(atPath: urlOfMp4SavedInFM.path, contents: data)
-                ///Создаем urlWithPath до file (mp4/jpg) в FileManager (чтбы плеер потом его смог бы достать из FM)
-                let urlWithPath = URL(filePath: urlOfMp4SavedInFM.path())
 
                 do {
                     switch file {
                     case .video:
-                        ///сохраняем в Photo Library (была  задача или из-за уведомления от системы так решил)
-                        try PHPhotoLibrary.shared().performChangesAndWait {
-                            let request = PHAssetCreationRequest.forAsset()
-                            request.addResource(with: .video, fileURL: urlOfMp4SavedInFM, options: nil) // бывает вариант с data
-                            self.assetID = request.placeholderForCreatedAsset?.localIdentifier
-                        }
+                        try self.saveVideoInPhotoLibraryWith(urlWithoutPath: urlOfMp4SavedInFM)
                         self.statusClosure?(State.loadedAndSaved)
                     case .photo:
                         print("Заставку не сохраняем в ФОТО, иначе, в момент сохранения при первом запуске, онлайн изменение полоски progress'a не показывается - его сбивает системный запрос на работу с PhotoLibrary")
                     }
-
-//                    ///нужную инфо о видео упорядочиваем в dataModel
-//                    let dataModel = VideoItemData(
-//                        name: nameAndExt,
-//                        mp4URLInFileManager: urlWithPath,
-//                        thumbnailURL: nil,
-////                          assetID:  self.assetID,
-//                        dateOfDownload: Date())
-//
-//                    ///dataModel добавляем в массив, массив кодируем в data и сохраняем в FM
-//                    self.dataModelsForSavingIntoFM.append(dataModel)
 
                 } catch {
                     switch error {
@@ -197,43 +166,11 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 }
             }
             dataTask.resume()
-//        } //от if else проверяющий есть ли такое видео 
+//        } //от if else проверяющий есть ли такое видео
     }
 }
 
 // MARK: - Extensions
-//extension LocalFilesManager: URLSessionDownloadDelegate {
-
-//заходит в urlData.write и приложении висит, не нашел решения
-//________
-//        let urlData = try Data(contentsOf: link)
-//        DispatchQueue.main.async {
-//            do {
-//                try urlData.write(to: fileURL, options: .atomic)
-//                PHPhotoLibrary.requestAuthorization { status in
-//                    if status == .authorized {
-//                        PHPhotoLibrary.shared().performChanges({
-//                            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: fileURL)
-//                        }) { completed, error in
-//                            if completed {
-//                                print("Video is saved!")
-//                            }
-//                            if let error = error {
-//                                print("Error saving video: \(error)")
-//                            }
-//                        }
-//                    }
-//                }
-//            } catch {
-//                print("Error writing video to disk: \(error)")
-//            }
-//        }
-//________
-
-
-
-
-
 
 
 
