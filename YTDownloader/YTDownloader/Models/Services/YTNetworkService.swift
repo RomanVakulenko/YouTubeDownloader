@@ -14,6 +14,7 @@ import XCDYouTubeKit
 
 
 protocol YTNetworkServiceProtocol: AnyObject {
+    var dataModelsStoredInFM: [VideoItemData]  { get set }
     func downloadVideo(videoIdentifier: String, videoURL: URL) throws
 }
 
@@ -23,19 +24,34 @@ final class YTNetworkService {
 
     // MARK: - Public properties
     var fileName: String?
-    var photoURL: URL?
+
     var mp4URLInFileManager: URL?
     var thimbnailURLOfVideo: URL?
 
-    var dataModelsForSavingIntoFM: [VideoItemData] = [] {
+    var dataModelsStoredInFM: [VideoItemData] = [] {
         didSet {
-            encodeAndSaveToFM(videoItemData: dataModelsForSavingIntoFM)
+            encodeAndSaveToFM(videoItemData: dataModelsStoredInFM)
+            print("dataModelsStoredInFM - \(dataModelsStoredInFM)")
         }
     }
 
     // MARK: - Private properties
     private let manager: LocalFilesManagerProtocol
     private let mapper: MapperProtocol
+
+
+    // MARK: - Init
+    init(manager: LocalFilesManagerProtocol, mapper: MapperProtocol) {
+        self.mapper = mapper
+        self.manager = manager
+        do {
+            let data = try Data(contentsOf: JsonModelsURL.inFM)
+            dataModelsStoredInFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
+        }
+        catch {
+            print("1st launch or Error decoding data from FileManager into dataModels", error)
+        }
+    }
 
     // MARK: - Private methods
     private func encodeAndSaveToFM(videoItemData: [VideoItemData]) {
@@ -44,28 +60,14 @@ final class YTNetworkService {
             let data = try mapper.encode(from: videoItemData)
             ///сохраняем в FM по уникальному url
             try data.write(to: JsonModelsURL.inFM)
+            print("dataWrittenInto JsonModelsURL.inFM - \(data)")
         } catch {
             print("Error saving data to FileManager: \(error.localizedDescription)")
         }
     }
 
-    // MARK: - Init
-    init(manager: LocalFilesManagerProtocol, mapper: MapperProtocol) {
-        self.mapper = mapper
-        self.manager = manager
-        do {
-            let data = try Data(contentsOf: JsonModelsURL.inFM)
-            dataModelsForSavingIntoFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
-        }
-        catch {
-            print("1st launch or Error decoding data from FileManager into dataModels", error)
-        }
-    }
-
-    // MARK: - Private methods
     private func fetchVideoInfo(youTubeID: String,
                                 onCompleted: @escaping (_ video: XCDYouTubeVideo) -> Void) {
-
         XCDYouTubeClient.default().getVideoWithIdentifier(youTubeID) { video, error in
             guard let video = video else {
                 if error != nil {
@@ -74,10 +76,9 @@ final class YTNetworkService {
                 return
             }
             onCompleted(video)
-            print("XCDYouTubeClient ------ \(video)")//если навести на video и нажать i, то выведет(смЗаметки)
+            print("XCDYouTubeClient ------ \(video)")
         }
     }
-
 }
 
 // MARK: - Extensions YTNetworkServiceProtocol
@@ -85,39 +86,38 @@ extension YTNetworkService: YTNetworkServiceProtocol {
 //    @MainActor
     func downloadVideo(videoIdentifier: String, videoURL: URL) throws {
 
-
         let fileName = videoIdentifier
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
 
         //        self.mp4URLInFileManager = URL(filePath: documentsURL.appendingPathComponent(fileName + ".mp4").path())
         //        self.thimbnailURLOfVideo = URL(filePath: documentsURL.appendingPathComponent(fileName + ".jpg").path())
 
-        let urlVideoINFM = URL(filePath: documentsURL.appendingPathComponent(fileName + ".mp4").path())
-        let urlPhotoINFM = URL(filePath: documentsURL.appendingPathComponent(fileName + ".jpg").path())
+        let urlVideoWithPathInFM = URL(filePath: documentsURL.appendingPathComponent(fileName + ".mp4").path())
+        let urlPhotoWithPathInFM = URL(filePath: documentsURL.appendingPathComponent(fileName + ".jpg").path())
         ///нужную инфо о видео упорядочиваем в новую dataModel
         let dataModel11 = VideoItemData(
             name: fileName,
-            mp4URLInFileManager: urlVideoINFM,
-            thumbnailURL: urlPhotoINFM,
+            mp4URLInFileManager: urlVideoWithPathInFM,
+            thumbnailURL: urlPhotoWithPathInFM,
             //                          assetID:  self.assetID,
             dateOfDownload: Date()
         )
             ///dataModel добавляем в массив, массив кодируем в data и сохраняем в FM
-            self.dataModelsForSavingIntoFM.append(dataModel11)
-            print(dataModelsForSavingIntoFM)
+            self.dataModelsStoredInFM.append(dataModel11)
+//            print(dataModelsStoredInFM)
 
-//        #error("сохранять ТУТ в PHPhotoLibrary, используя URLWithoutPath - выпилить код из LocalFilesManager - и подумать - возможно переименовать классы этот и LocalFilesManager соосно функционалу, реализовать удаление и обновление коллекции тут же, 3. если не первый запуск и если все видео удалены, то выкидывать алерт")
-        let fmVideoURLWithoutPath = documentsURL.appendingPathComponent(fileName + ".mp4")
-
-
+//        #error("1. переименовать классы этот и LocalFilesManager соосно функционалу, реализовать удаление и обновление коллекции тут же, 2. если не первый запуск и если все видео удалены, то выкидывать алерт")
+//        let fmVideoURLWithoutPath = documentsURL.appendingPathComponent(fileName + ".mp4")
 
 
         fetchVideoInfo(youTubeID: videoIdentifier) { [weak self] video in
             guard let self else {return}
 
             self.fileName = "\(video.identifier)"
-            let videoThumbnail = video.thumbnailURLs?.first
-            self.photoURL = videoThumbnail
+            guard let videoThumbnail = video.thumbnailURLs?.first else {
+                print("There was no thumbnail or can not get it")
+                return
+            }
 
             Task {
                 do {
@@ -129,9 +129,7 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         print("streamURL error")
                         return
                     }
-
-//без загрузки фото запрос системы на разрешение работать с фото библиотекой не прерывает изменение прогресса загрузки (если же метод загрузки фото включить, то он отрабатывает быстрее и системное уведомление выскакивает и прерывает изменение прогресса загрузки видео - полагаю из-за асинхронности URLSession.shared.dataTask и из-за того, что мы в Task вызываем - тоже асинхронное выполнение кода) - как возможное решение - вынести сохранение в PHPhotoLibrary сюда после метода fetchVideoInfo, но тогда придется инициацию алерта loadedAndSaved тоже выносить, пока оставляю так, поскольку фото - заставку видео могу сгенерить AVAssetImageGenerator'ом в самой ячейке.
-                    try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: self.photoURL!, filename: self.fileName!, extension: "jpg")
+                    try self.manager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: videoThumbnail, filename: self.fileName!, extension: "jpg")
 
                     try self.manager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
 
