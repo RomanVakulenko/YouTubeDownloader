@@ -10,12 +10,14 @@ import AVFoundation
 import Photos
 
 protocol LocalFilesManagerProtocol: AnyObject {
-    var statusClosure: ((State) -> Void)? {get set}
-    var progressClosure: ((Float) ->Void)? {get set}
+    var statusClosure: ((State) -> Void)? { get set }
+    var progressClosure: ((Float) ->Void)? { get set }
     func downloadFileAndSaveToPhotoGallery(_ file: File,
                                            wwwlink: URL,
                                            filename: String,
                                            extension ext: String) throws
+    func deleteFileFromPhotoLibraryBy(nameAndExt: String, mp4URL: URL, jpgURL: URL?) throws
+    func checkIfVideoExist(path: String) -> Bool
 }
 
 enum File {
@@ -42,21 +44,32 @@ final class LocalFilesManager {
     }
 
     // MARK: - Public methods
-    func deleteFilefromPhotoLibraryBy(_ nameAndExt: String) { //потом сделать deleteVideoByName(_ name: String) //будет удалять и из коллекции, и из fileManager и из PhotoLibrary
+    func deleteFileFromPhotoLibraryBy(nameAndExt: String, mp4URL: URL, jpgURL: URL?) throws {
+        ///удаляем из FM mp4 и jpg
+        if fileManager.fileExists(atPath: mp4URL.path) {
+            do {
+                guard let jpgURL else { return }
+                try self.fileManager.removeItem(at: mp4URL)
+                try self.fileManager.removeItem(at: jpgURL)
+                print("File at \(mp4URL) was removed from FileManager")
+                print("File at \(jpgURL) was removed from FileManager")
+            } catch {
+                throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
+            }
+        }
+        ///удаляем из PhotoLibrary
         var assetsLocalIDs = [String]()
         let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
-        guard let oneID = oneID else {
-            print("Не смог достать объект \(nameAndExt) по этому же ключу из userDefaults, странно, но иногда выкидывает системный запрос на удаление видео, удаляю/Allow, но в приложении Фото видео висит))) пытался часа 4 это сделать и оставил так")
-            return
-        }
+        guard let oneID else { return }
         assetsLocalIDs.append(oneID)
+
         let allAssets = PHAsset.fetchAssets(withLocalIdentifiers: assetsLocalIDs, options: nil)
         if let assetToDelete = allAssets.firstObject {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.deleteAssets([assetToDelete] as NSArray)
             }) { success, error in
                 if success {
-                    print("Файл \(nameAndExt) удален успешно")
+                    print("Файл \(nameAndExt) удален успешно из PhotoLibrary")
                 } else {
                     print("Ошибка удаления файла: \(error!.localizedDescription)")
                 }
@@ -64,15 +77,22 @@ final class LocalFilesManager {
         }
     }
 
+    func checkIfVideoExist(path: String) -> Bool {
+        return FileManager.default.fileExists(atPath: path)
+    }
 
 
     // MARK: - Private methods
-    private func saveVideoInPhotoLibraryWith(urlWithoutPath: URL) throws {
+    private func saveVideoToPHAndAssetToUD(urlWithoutPath: URL, nameAndExt: String) throws {
         ///сохраняем в Photo Library (была  задача или из-за уведомления от системы так решил)
         try PHPhotoLibrary.shared().performChangesAndWait {
             let request = PHAssetCreationRequest.forAsset()
             request.addResource(with: .video, fileURL: urlWithoutPath, options: nil) // бывает вариант с data
-            self.assetID = request.placeholderForCreatedAsset?.localIdentifier
+            if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
+                self.assetID = assetID
+                ///сохраним в UD - так удобнее, чем выбрасывать assetID в YTNetworkService (для модели)
+                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления
+            }
         }
     }
 
@@ -97,19 +117,13 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
 
         let nameAndExt = filename + "." + ext
         let urlOfMp4SavedInFM = documentsURL.appendingPathComponent(nameAndExt)
-//        if fileManager.fileExists(atPath: urlOfMp4SavedInFM.path) {
-//            print("File already exists")
-//            if file  == .video {
-//                self.statusClosure?(State.fileExists)
-//            }
-//            self.deleteFilefromPhotoLibraryBy(nameAndExt)
-//            do {
-//                try self.fileManager.removeItem(at: urlOfMp4SavedInFM)
-//                print("File \(nameAndExt) was removed from FileManager")
-//            } catch {
-//                throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
-//            }
-//        } else {
+
+        if self.checkIfVideoExist(path: urlOfMp4SavedInFM.path) {
+            print("File already exists")
+            if file  == .video {
+                self.statusClosure?(State.fileExists)
+            }
+        } else {
             self.observation?.invalidate()
             if file  == .video {
                 self.statusClosure?(State.loading)
@@ -134,7 +148,8 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 do {
                     switch file {
                     case .video:
-                        try self.saveVideoInPhotoLibraryWith(urlWithoutPath: urlOfMp4SavedInFM)
+                        ///Сохраняем video в PhotoLibrary
+                        try self.saveVideoToPHAndAssetToUD(urlWithoutPath: urlOfMp4SavedInFM, nameAndExt: nameAndExt)
                         self.statusClosure?(State.loadedAndSaved)
                     case .photo:
                         print("Заставку не сохраняем в ФОТО, иначе, в момент сохранения при первом запуске, онлайн изменение полоски progress'a не показывается - его сбивает системный запрос на работу с PhotoLibrary")
@@ -166,7 +181,7 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 }
             }
             dataTask.resume()
-//        } //от if else проверяющий есть ли такое видео
+        }
     }
 }
 

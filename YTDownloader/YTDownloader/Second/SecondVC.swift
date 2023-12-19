@@ -74,21 +74,18 @@ final class SecondVC: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension SecondVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.videos?.count ?? 0
+        return viewModel.videos.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
-
-        cell.configure(with: viewModel.videos?[indexPath.item])
+        cell.configure(with: viewModel.videos[indexPath.item])
 
 
         cell.didTapDeleteClosure = { [weak self] in
             guard let strongSelf = self else {return}
 
             strongSelf.viewModel.didTapDeleteVideoAt(indexPath) {
-//                collectionView.deleteItems(at: [indexPath])
-                print(strongSelf.viewModel.videos as Any)
                 collectionView.reloadData()
             }
         }

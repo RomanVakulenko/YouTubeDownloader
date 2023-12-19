@@ -82,7 +82,7 @@ final class CellForSecondVC: UICollectionViewCell {
     func configure(with uiMediaItem: MediaItemProtocol?) {
 
         if let uiModel = uiMediaItem {
-            urlToVideoInFM = uiModel.mp4URLInFileManager //это путь до mp4 видеофайла, который лежит в FileManager
+            urlToVideoInFM = uiModel.mp4URLWithPathInFMForPlayer //это путь до mp4 видеофайла, который лежит в FileManager
             dateLabel.text = DateManager.createStringFromDate(uiModel.dateOfDownload, andFormatTo: "dd.MM.yy")
             if let url = urlToVideoInFM {
                 let asset = AVAsset(url: url)
@@ -93,7 +93,7 @@ final class CellForSecondVC: UICollectionViewCell {
                     let thumbnail = UIImage(cgImage: imageRef)
                     //                    thumbnailImageView.image = thumbnail
 
-                    if let imageData = try? Data(contentsOf: uiModel.thumbnailURL!),
+                    if let imageData = try? Data(contentsOf: uiModel.jpgURLWithPathInFMForPlayer!),
                        let image = UIImage(data: imageData) {
                         thumbnailImageView.image = image
                         //                    #error("по идее, в модели есть URL картинки")

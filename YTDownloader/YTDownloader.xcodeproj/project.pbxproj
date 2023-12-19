@@ -33,11 +33,12 @@
 		ADBB992B2B1DDE7700E5DBCD /* YTNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */; };
 		ADBB992E2B1DE5EA00E5DBCD /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBB992D2B1DE5EA00E5DBCD /* MediaModel.swift */; };
 		ADBCBBF62B16244D0070EDC0 /* RouterErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */; };
-		ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF72B162E380070EDC0 /* Mapper.swift */; };
+		ADBCBBF82B162E380070EDC0 /* DataMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF72B162E380070EDC0 /* DataMapper.swift */; };
 		ADBCBBFA2B1631700070EDC0 /* MapperError.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBF92B1631700070EDC0 /* MapperError.swift */; };
 		ADBCBBFE2B1633920070EDC0 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBFD2B1633920070EDC0 /* NetworkManager.swift */; };
 		ADBCBC002B163AD20070EDC0 /* NetworkManagerErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBFF2B163AD20070EDC0 /* NetworkManagerErrors.swift */; };
 		ADBEC2EE2B2B0E82002400EF /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBEC2ED2B2B0E82002400EF /* DateFormatter.swift */; };
+		ADC3C4272B3200BC003D8CDA /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC3C4262B3200BC003D8CDA /* Storage.swift */; };
 		ADF2B13F2B204E04002A3304 /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADF2B13E2B204E04002A3304 /* XCDYouTubeKit */; };
 		ADF2B1442B2080EF002A3304 /* FileManagerErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2B1432B2080EF002A3304 /* FileManagerErrors.swift */; };
 /* End PBXBuildFile section */
@@ -71,11 +72,12 @@
 		ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTNetworkService.swift; sourceTree = "<group>"; };
 		ADBB992D2B1DE5EA00E5DBCD /* MediaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModel.swift; sourceTree = "<group>"; };
 		ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterErrors.swift; sourceTree = "<group>"; };
-		ADBCBBF72B162E380070EDC0 /* Mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mapper.swift; sourceTree = "<group>"; };
+		ADBCBBF72B162E380070EDC0 /* DataMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMapper.swift; sourceTree = "<group>"; };
 		ADBCBBF92B1631700070EDC0 /* MapperError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperError.swift; sourceTree = "<group>"; };
 		ADBCBBFD2B1633920070EDC0 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		ADBCBBFF2B163AD20070EDC0 /* NetworkManagerErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerErrors.swift; sourceTree = "<group>"; };
 		ADBEC2ED2B2B0E82002400EF /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		ADC3C4262B3200BC003D8CDA /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		ADF2B1432B2080EF002A3304 /* FileManagerErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerErrors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -203,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				ADBB992A2B1DDE7700E5DBCD /* YTNetworkService.swift */,
+				ADC3C4262B3200BC003D8CDA /* Storage.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -211,7 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				ADBCBBF52B16244D0070EDC0 /* RouterErrors.swift */,
-				ADBCBBF72B162E380070EDC0 /* Mapper.swift */,
+				ADBCBBF72B162E380070EDC0 /* DataMapper.swift */,
 				ADBCBBF92B1631700070EDC0 /* MapperError.swift */,
 			);
 			path = "Core networkLayer";
@@ -341,8 +344,9 @@
 				ADBEC2EE2B2B0E82002400EF /* DateFormatter.swift in Sources */,
 				AD7C7C782B14C6FB00C8A8CE /* HeaderForSecondVC.swift in Sources */,
 				ADB695662B1A19C7001E4C09 /* UIViewContr + ext.swift in Sources */,
-				ADBCBBF82B162E380070EDC0 /* Mapper.swift in Sources */,
+				ADBCBBF82B162E380070EDC0 /* DataMapper.swift in Sources */,
 				AD9474EA2B2B7481002B888A /* JsonModelsURL.swift in Sources */,
+				ADC3C4272B3200BC003D8CDA /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
