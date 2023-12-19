@@ -1,5 +1,5 @@
 //
-//  Mapper.swift
+//  DataMapper.swift
 //  YTDownloader
 //
 //  Created by Roman Vakulenko on 28.11.2023.

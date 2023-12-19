@@ -44,7 +44,8 @@ final class VideoFlowCoordinator {
         let mapper = DataMapper()
         let fileManager = LocalFilesManager(mapper: mapper)
         let networkService = YTNetworkService(manager: fileManager, mapper: mapper)
-        let viewModel = SecondViewModel(emptyVideoAlertDelegate: emptyVideoDelegate,
+        let viewModel = SecondViewModel(coordinator: self,
+                                        emptyVideoAlertDelegate: emptyVideoDelegate,
                                         mapper: mapper,
                                         ytNetworkService: networkService
         )

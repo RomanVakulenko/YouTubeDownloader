@@ -117,7 +117,7 @@ final class FirstVC: UIViewController {
         super.viewDidLoad()
         setupView()
         layout()
-        progressView.progress = 0
+//        progressView.progress = 0
     }
 
     required init?(coder: NSCoder) {
@@ -187,6 +187,7 @@ final class FirstVC: UIViewController {
                     case .loading:
                         Show.spinner.stopAnimating()
                         //progress
+                        strongSelf.progressView.progress = 0
                         strongSelf.boxProgressView.isHidden = false
                         strongSelf.viewModel.fManager.progressClosure = { observingProgress in
                             strongSelf.progressView.progress = observingProgress
@@ -204,6 +205,7 @@ final class FirstVC: UIViewController {
 
                     case .thereIsNoAnyVideo:
                         ShowAlert.type(.thereIsNoAnyVideo, at: strongSelf, message: "There is no any Video")
+                        strongSelf.referenceTextField.text = nil
                     }
                 }
             }
