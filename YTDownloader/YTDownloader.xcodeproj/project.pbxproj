@@ -23,7 +23,6 @@
 		AD7C7C7A2B14CA2200C8A8CE /* UIView + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C792B14CA2200C8A8CE /* UIView + extension.swift */; };
 		AD7C7C7C2B14F3CF00C8A8CE /* Print + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7B2B14F3CF00C8A8CE /* Print + extension.swift */; };
 		AD7C7C7F2B15C86A00C8A8CE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C7C7E2B15C86A00C8A8CE /* Constants.swift */; };
-		AD861BF12B1F3C2C005D60E4 /* YouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = AD861BF02B1F3C2C005D60E4 /* YouTubeKit */; };
 		AD9474EA2B2B7481002B888A /* JsonModelsURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9474E92B2B7481002B888A /* JsonModelsURL.swift */; };
 		ADB695682B1A2D41001E4C09 /* LocalFilesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB695672B1A2D41001E4C09 /* LocalFilesManager.swift */; };
 		ADBA6E162B187BDD006A23EB /* String + extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBA6E152B187BDD006A23EB /* String + extension.swift */; };
@@ -37,6 +36,7 @@
 		ADBCBC002B163AD20070EDC0 /* NetworkServiceErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBCBBFF2B163AD20070EDC0 /* NetworkServiceErrors.swift */; };
 		ADBEC2EE2B2B0E82002400EF /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBEC2ED2B2B0E82002400EF /* DateFormatter.swift */; };
 		ADC3C4272B3200BC003D8CDA /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC3C4262B3200BC003D8CDA /* Storage.swift */; };
+		ADC3C42A2B33451B003D8CDA /* YouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADC3C4292B33451B003D8CDA /* YouTubeKit */; };
 		ADF2B13F2B204E04002A3304 /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADF2B13E2B204E04002A3304 /* XCDYouTubeKit */; };
 		ADF2B1442B2080EF002A3304 /* FileManagerErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2B1432B2080EF002A3304 /* FileManagerErrors.swift */; };
 /* End PBXBuildFile section */
@@ -82,8 +82,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD861BF12B1F3C2C005D60E4 /* YouTubeKit in Frameworks */,
 				ADF2B13F2B204E04002A3304 /* XCDYouTubeKit in Frameworks */,
+				ADC3C42A2B33451B003D8CDA /* YouTubeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,8 +242,8 @@
 			);
 			name = YTDownloader;
 			packageProductDependencies = (
-				AD861BF02B1F3C2C005D60E4 /* YouTubeKit */,
 				ADF2B13E2B204E04002A3304 /* XCDYouTubeKit */,
+				ADC3C4292B33451B003D8CDA /* YouTubeKit */,
 			);
 			productName = YTDownloader;
 			productReference = AD7C7C442B13148500C8A8CE /* YTDownloader.app */;
@@ -274,8 +274,8 @@
 			);
 			mainGroup = AD7C7C3B2B13148500C8A8CE;
 			packageReferences = (
-				AD861BEF2B1F3C2C005D60E4 /* XCRemoteSwiftPackageReference "YouTubeKit" */,
 				ADF2B13D2B204E04002A3304 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
+				ADC3C4282B33451B003D8CDA /* XCRemoteSwiftPackageReference "YouTubeKit" */,
 			);
 			productRefGroup = AD7C7C452B13148500C8A8CE /* Products */;
 			projectDirPath = "";
@@ -548,7 +548,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		AD861BEF2B1F3C2C005D60E4 /* XCRemoteSwiftPackageReference "YouTubeKit" */ = {
+		ADC3C4282B33451B003D8CDA /* XCRemoteSwiftPackageReference "YouTubeKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Jeehut/YouTubeKit.git";
 			requirement = {
@@ -567,9 +567,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AD861BF02B1F3C2C005D60E4 /* YouTubeKit */ = {
+		ADC3C4292B33451B003D8CDA /* YouTubeKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AD861BEF2B1F3C2C005D60E4 /* XCRemoteSwiftPackageReference "YouTubeKit" */;
+			package = ADC3C4282B33451B003D8CDA /* XCRemoteSwiftPackageReference "YouTubeKit" */;
 			productName = YouTubeKit;
 		};
 		ADF2B13E2B204E04002A3304 /* XCDYouTubeKit */ = {
