@@ -26,11 +26,18 @@ final class HeaderForSecondVC: UICollectionReusableView {
         super.init(frame: frame)
         backgroundColor = .red
         addSubview(titleLabel)
-        titleLabel.frame = bounds
+        layout()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func layout() {
+        NSLayoutConstraint.activate([
+                titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+                titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ])
     }
 
 }

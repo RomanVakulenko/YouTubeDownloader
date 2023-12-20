@@ -44,7 +44,7 @@ final class SecondViewModel {
             videos = try mapper.decode(from: data, toArrStruct: [UIMediaItem].self)
             print("videos.count = \(videos.count), viewModelvideos = \(videos)")
         } catch {
-            print(NetworkManagerErrors.mapperErrors(error: .failAtMapping(reason: "1st launch или нечего декодировать or Ошибка конвертации из ФC в data или декодирования в [UIMediaItem]")))
+            print(NetworkServiceErrors.mapperErrors(error: .failAtMapping(reason: "1st launch или нечего декодировать or Ошибка конвертации из ФC в data или декодирования в [UIMediaItem]")))
         }
     }
 
@@ -55,8 +55,8 @@ final class SecondViewModel {
         let videoToDelete = videos[indexPath.item]
 
         ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM и перезаписываем содержание массива  в FM по адресу JsonModelsURL.inFM
-        Storage.shared.dataModelsStoredInFM.removeAll(where: { $0.name == videoToDelete.name })
         ///и перезаписываем содержание массива DataModelsStoredInFM в FM по адресу JsonModelsURL.inFM
+        Storage.shared.dataModelsStoredInFM.removeAll(where: { $0.name == videoToDelete.name })
 
         ///удаляем из FileManager и из PhotoLibrary
         self.ytNetworkService?.deleteFilesFromFMAndPhotoLibraryBy(
@@ -68,19 +68,14 @@ final class SecondViewModel {
         ///удаляем видео из массива для коллекции
         self.videos.remove(at: indexPath.item)
 
-        if self.videos.count == 0 {
-            emptyVideoDelegate?.organizeAlertOfNoVideo()
-            coordinator.popToRootVC()
-        }
-        print(self.videos)
-        print(Storage.shared.dataModelsStoredInFM)
+        self.videos.count == 0 ? coordinator.popToRootVC() : ()
         reloadCollectionWhenCompleted()
     }
-    //запускать, когда 2 контроллер уходит с экрана
-//    func informIfNoVideo() {
-//                if videos.isEmpty {
-//
-//                }
-//    }
+
+    func informIfNoVideo() {
+        if self.videos.count == 0 {
+            emptyVideoDelegate?.organizeAlertOfNoVideo()
+        }
+    }
 }
 

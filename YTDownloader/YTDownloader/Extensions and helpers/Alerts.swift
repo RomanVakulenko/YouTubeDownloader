@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 enum AlertCases {
-    case invalidURL, fileExists, thereIsNoAnyVideo, videoSavedToPhotoLibrary
+    case invalidURL, fileExists, videoSavedToPhotoLibrary, thereIsNoAnyVideo
 }
 
 enum ShowAlert {

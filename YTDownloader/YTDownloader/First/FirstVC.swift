@@ -50,8 +50,6 @@ final class FirstVC: UIViewController {
         return textField
     }()
 
-    private var videoIDFromEnteredURL = String()
-
     private lazy var downloadButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -75,10 +73,8 @@ final class FirstVC: UIViewController {
     }()
 
     private lazy var boxProgressView: UIView = {
-        let boxView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width*0.65, height: 80))
-        boxView.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-        boxView.layer.cornerRadius = 10.0
-        boxView.layer.borderWidth = 2.0
+        let boxView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.65, height: 72))
+        boxView.backgroundColor = .none
         boxView.layer.borderColor = .none
         boxView.center = self.view.center
         boxView.isHidden = true
@@ -86,10 +82,13 @@ final class FirstVC: UIViewController {
     }()
 
     private lazy var progressView: UIProgressView = {
-        let pView = UIProgressView(frame: CGRect(x: boxProgressView.frame.width*0.1, y: boxProgressView.frame.height * 0.8, width:   boxProgressView.frame.width*0.8, height: 2))
-        pView.tag = 10
-        pView.progressTintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        pView.progress = 0.0
+        let pView = UIProgressView(frame: CGRect(x: boxProgressView.frame.width * 0.1,
+                                                 y: boxProgressView.frame.height * 0.8,
+                                                 width: boxProgressView.frame.width * 0.8,
+                                                 height: 2))
+
+        pView.progressTintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+//        pView.progress = 0.0
         return pView
     }()
 
@@ -104,9 +103,6 @@ final class FirstVC: UIViewController {
         return titleLbl
     }()
 
-    //        Circular.progressView = progressV
-
-
     // MARK: - Init
     init(viewModel: FirstViewModel) {
         self.viewModel = viewModel
@@ -117,7 +113,6 @@ final class FirstVC: UIViewController {
         super.viewDidLoad()
         setupView()
         layout()
-//        progressView.progress = 0
     }
 
     required init?(coder: NSCoder) {
@@ -182,12 +177,13 @@ final class FirstVC: UIViewController {
 
                     case .fileExists:
                         Show.spinner.stopAnimating()
-                        ShowAlert.type(.fileExists, at: strongSelf, message: "File already exists")
+                        ShowAlert.type(.fileExists, at: strongSelf, message: "File already exists, search field is cleared for your convenience")
+                        strongSelf.referenceTextField.text = nil
 
                     case .loading:
                         Show.spinner.stopAnimating()
                         //progress
-                        strongSelf.progressView.progress = 0
+                        strongSelf.progressView.progress = 0.0
                         strongSelf.boxProgressView.isHidden = false
                         strongSelf.viewModel.fManager.progressClosure = { observingProgress in
                             strongSelf.progressView.progress = observingProgress
@@ -196,6 +192,7 @@ final class FirstVC: UIViewController {
                     case .loadedAndSaved:
                         strongSelf.boxProgressView.isHidden = true
                         ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved")
+                        strongSelf.referenceTextField.text = nil
 
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
@@ -204,7 +201,7 @@ final class FirstVC: UIViewController {
                         strongSelf.referenceTextField.text = nil
 
                     case .thereIsNoAnyVideo:
-                        ShowAlert.type(.thereIsNoAnyVideo, at: strongSelf, message: "There is no any Video")
+                        ShowAlert.type(.thereIsNoAnyVideo, at: strongSelf, message: "There is no any video")
                         strongSelf.referenceTextField.text = nil
                     }
                 }
@@ -223,9 +220,7 @@ final class FirstVC: UIViewController {
                 viewModel.state = .badURL(alertText: "Invalid YouTube URL")
                 return
             }
-            videoIDFromEnteredURL = videoID
-
-            viewModel.downloadVideo(at: videoIDFromEnteredURL, and: url)
+            viewModel.downloadVideo(at: videoID, and: url)
         }
     }
 
@@ -234,20 +229,3 @@ final class FirstVC: UIViewController {
     }
 
 }
-
-
-// MARK: - extension
-//extension FirstVC: URLSessionDownloadDelegate {
-//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-//        self.boxProgressView.isHidden = true
-//    }
-//
-//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-//        let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
-//        DispatchQueue.main.async {
-//            self.progressView.progress = progress
-//            self.titleProgress.text = "\(progress * 100)%"
-//        }
-//    }
-//}
-

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum NetworkManagerErrors: Error, CustomStringConvertible {
+enum NetworkServiceErrors: Error, CustomStringConvertible {
     case show
     case networkRouterErrors(error: RouterErrors)
     case mapperErrors(error: MapperError)

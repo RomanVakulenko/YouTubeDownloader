@@ -9,9 +9,6 @@ import Foundation
 import YouTubeKit
 import XCDYouTubeKit
 
-
-//var DataModelsStoredInFM = [VideoItemData]()
-
 protocol YTNetworkServiceProtocol: AnyObject {
 //    var dataModelsStoredInFM: [VideoItemData]  { get set }
     func downloadVideo(videoIdentifier: String, videoURL: URL) throws
@@ -22,17 +19,13 @@ protocol YTNetworkServiceProtocol: AnyObject {
 
 final class YTNetworkService {
 
-
     // MARK: - Public properties
     var fileName: String?
-
     var mp4URLInFileManager: URL?
     var thumbnailURLInFileManager: URL?
 
 //    var dataModelsStoredInFM: [VideoItemData]?
-//        didSet {
-//            encodeAndSaveToFM(videoItemData: dataModelsStoredInFM)
-//        }
+//        didSet { encodeAndSaveToFM(videoItemData: dataModelsStoredInFM) }
 //    }
 
     // MARK: - Private properties
@@ -44,7 +37,7 @@ final class YTNetworkService {
     init(manager: LocalFilesManagerProtocol, mapper: MapperProtocol) {
         self.mapper = mapper
         self.fileManager = manager
-//        ///нужно, чтобы при перезапуске отображались уже скачанные видео
+          ///нужно, чтобы при перезапуске отображались уже скачанные видео
 //        do {
 //            let data = try Data(contentsOf: JsonModelsURL.inFM)
 //            dataModelsStoredInFM = try mapper.decode(from: data, toArrStruct: [VideoItemData].self)
@@ -100,7 +93,6 @@ extension YTNetworkService: YTNetworkServiceProtocol {
     //    @MainActor
     func downloadVideo(videoIdentifier: String, videoURL: URL) throws {
 
-
         let fileName = videoIdentifier
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         self.mp4URLInFileManager = URL(filePath: documentsURL.appendingPathComponent(fileName + ".mp4").path())
@@ -148,7 +140,7 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         try self.fileManager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
                         
                     } catch let error as RouterErrors {
-                        throw NetworkManagerErrors.networkRouterErrors(error: error)
+                        throw NetworkServiceErrors.networkRouterErrors(error: error)
                     }
                 }
 

@@ -60,9 +60,6 @@ final class FirstViewModel {
     func showSecondVC() {
         coordinator?.pushSecondVC(emptyVideoDelegate: self)
     }
-    
-    // MARK: - Private methods
-    
 }
 
 
@@ -94,7 +91,7 @@ extension FirstViewModel: NetworkAPIProtocol {
             }
         } catch {
             switch error {
-            case NetworkManagerErrors.networkRouterErrors(error: .fetchingXCDVideoError):
+            case NetworkServiceErrors.networkRouterErrors(error: .fetchingXCDVideoError):
                 print("XCDYouTubeVideo не смог сделать URL для загрузки с инета")
             default: print(error.localizedDescription)
             }

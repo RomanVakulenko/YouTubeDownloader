@@ -49,9 +49,11 @@ final class SecondVC: UIViewController {
         viewModel.makeVideosArrForUI()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
+            self.viewModel.informIfNoVideo()
+        }
     }
 
     // MARK: - Private methods
@@ -119,7 +121,7 @@ extension SecondVC: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width - Constants.insetForCell * 2
-        let height = Constants.headerHeight * 2
+        let height = collectionView.bounds.width * 0.55
         return CGSize(width: width, height: height)
     }
     //отступы по периметру дисплея

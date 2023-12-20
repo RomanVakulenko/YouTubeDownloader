@@ -54,7 +54,7 @@ final class LocalFilesManager {
                 print("File at \(mp4URL) was removed from FileManager")
                 print("File at \(jpgURL) was removed from FileManager")
             } catch {
-                throw NetworkManagerErrors.fileManagerErrors(error: .unableToDelete)
+                throw NetworkServiceErrors.fileManagerErrors(error: .unableToDelete)
             }
         }
         ///удаляем из PhotoLibrary
@@ -91,7 +91,7 @@ final class LocalFilesManager {
             if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
                 self.assetID = assetID
                 ///сохраним в UD - так удобнее, чем выбрасывать assetID в YTNetworkService (для модели)
-                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления
+                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления video из PhotoLibrary
             }
         }
     }
@@ -112,14 +112,13 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                                            extension ext: String) throws {
 
         guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            throw NetworkManagerErrors.fileManagerErrors(error: .cannotGetURLOfFile)
+            throw NetworkServiceErrors.fileManagerErrors(error: .cannotGetURLOfFile)
         }
 
         let nameAndExt = filename + "." + ext
         let urlOfMp4SavedInFM = documentsURL.appendingPathComponent(nameAndExt)
 
         if self.checkIfVideoExist(path: urlOfMp4SavedInFM.path) {
-            print("File already exists")
             if file  == .video {
                 self.statusClosure?(State.fileExists)
             }
@@ -152,14 +151,14 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                         try self.saveVideoToPHAndAssetToUD(urlWithoutPath: urlOfMp4SavedInFM, nameAndExt: nameAndExt)
                         self.statusClosure?(State.loadedAndSaved)
                     case .photo:
-                        print("Заставку не сохраняем в ФОТО, иначе, в момент сохранения при первом запуске, онлайн изменение полоски progress'a не показывается - его сбивает системный запрос на работу с PhotoLibrary")
+                        print("Заставку не сохраняем в PhotoLibrary, иначе, в момент сохранения при первом запуске, системный запрос на работу с PhotoLibrary сбивает изменение progress'a, да и из PhotoLibrary photo не удалить вроде как кодом")
                     }
 
                 } catch {
                     switch error {
-                    case NetworkManagerErrors.fileManagerErrors(error: .unableToMove):
+                    case NetworkServiceErrors.fileManagerErrors(error: .unableToMove):
                         print(error.localizedDescription)
-                    case NetworkManagerErrors.fileManagerErrors(error: .unableToSaveToPHLibrary):
+                    case NetworkServiceErrors.fileManagerErrors(error: .unableToSaveToPHLibrary):
                         print(error.localizedDescription)
                     default:
                         print("Error saving \(file) to Photo Library: \(error.localizedDescription)")
@@ -184,67 +183,3 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
         }
     }
 }
-
-// MARK: - Extensions
-
-
-
-// MARK: - Public methods
-//    func getLocalFileURL(withNameAndExtension fileName_ext: String) -> URL {
-//        return fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(fileName_ext)
-//    }
-
-//были внутри класса:
-//
-//static func saveImage(_ image: UIImage?, withName filename: String) {
-//    guard let img = image else {
-//        return
-//    }
-//    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-//    let documentsDirectory = paths[0]
-//    let dataPathStr = documentsDirectory + "/" + filename + ".jpg"
-//
-//    let dataPath = URL(fileURLWithPath: dataPathStr)
-//    do {
-//        try img.jpegData(compressionQuality: 1.0)?.write(to: dataPath, options: .atomic)
-//    } catch {
-//        print("file cant not be save at path \(dataPath), with error : \(error)");
-//    }
-//}
-//
-//static func deleteFile(withNameAndExtension filename_ext: String) -> Bool {
-//    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-//    let documentsDirectory = paths[0]
-//    let dataPathStr = documentsDirectory + "/" + filename_ext
-//    if FileManager.default.fileExists(atPath: dataPathStr) {
-//        do {
-//            try FileManager.default.removeItem(atPath: dataPathStr)
-//            print("Removed file: \(dataPathStr)")
-//        } catch let removeError {
-//            print("couldn't remove file at path", removeError.localizedDescription)
-//            return false
-//        }
-//    }
-//    return true
-//}
-//
-//static func checkFileExist (_ filename_ext: String) -> Bool {
-//    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-//    let documentsDirectory = paths[0]
-//    let dataPathStr = documentsDirectory + "/" + filename_ext
-//    return FileManager.default.fileExists(atPath: dataPathStr)
-//}
-//
-//static func clearTmpDirectory() {
-//    do {
-//        let tmpDirURL = FileManager.default.temporaryDirectory
-//        let tmpDirectory = try FileManager.default.contentsOfDirectory(atPath: tmpDirURL.path)
-//        try tmpDirectory.forEach { file in
-//            let fileUrl = tmpDirURL.appendingPathComponent(file)
-//            try FileManager.default.removeItem(atPath: fileUrl.path)
-//        }
-//    } catch {
-//        print("Cleaning Tmp Directory Failed: " + error.localizedDescription)
-//    }
-//}
-//

@@ -82,28 +82,29 @@ final class CellForSecondVC: UICollectionViewCell {
     func configure(with uiMediaItem: MediaItemProtocol?) {
 
         if let uiModel = uiMediaItem {
-            urlToVideoInFM = uiModel.mp4URLWithPathInFMForPlayer //это путь до mp4 видеофайла, который лежит в FileManager
+            ///путь до mp4 видеофайла, который лежит в FileManager
+            urlToVideoInFM = uiModel.mp4URLWithPathInFMForPlayer
             dateLabel.text = DateManager.createStringFromDate(uiModel.dateOfDownload, andFormatTo: "dd.MM.yy")
-            if let url = urlToVideoInFM {
+
+            if let imageData = try? Data(contentsOf: uiModel.jpgURLWithPathInFMForPlayer!),
+               let image = UIImage(data: imageData) {
+                thumbnailImageView.image = image
+            }
+            /// так можно получить заставку  если в metadata не было  thumbnail
+            else if uiModel.jpgURLWithPathInFMForPlayer == nil {
+                guard let url = urlToVideoInFM else { return }
+
                 let asset = AVAsset(url: url)
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
                 imageGenerator.appliesPreferredTrackTransform = true
                 let time = CMTimeMake(value: 1, timescale: 2) // Здесь можно указать нужное время для получения кадра
                 if let imageRef = try? imageGenerator.copyCGImage(at: time, actualTime: nil) {
                     let thumbnail = UIImage(cgImage: imageRef)
-                    //                    thumbnailImageView.image = thumbnail
-
-                    if let imageData = try? Data(contentsOf: uiModel.jpgURLWithPathInFMForPlayer!),
-                       let image = UIImage(data: imageData) {
-                        thumbnailImageView.image = image
-                        //                    #error("по идее, в модели есть URL картинки")
-                    }
+                    thumbnailImageView.image = thumbnail
                 }
             }
-
         }
     }
-
 
     // MARK: - Private methods
     private func setupView() {
@@ -111,12 +112,13 @@ final class CellForSecondVC: UICollectionViewCell {
         [videoView, playButton, deleteButton, dateLabel].forEach { contentView.addSubview($0) }
         contentView.backgroundColor = .lightGray
     }
+
     private func layout() {
         NSLayoutConstraint.activate([
             videoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             videoView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             videoView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            videoView.heightAnchor.constraint(equalToConstant: playerLayer?.bounds.height ?? contentView.bounds.height * 1),
+            videoView.heightAnchor.constraint(equalTo: contentView.heightAnchor),
 
             thumbnailImageView.leadingAnchor.constraint(equalTo: videoView.leadingAnchor),
             thumbnailImageView.trailingAnchor.constraint(equalTo: videoView.trailingAnchor),
@@ -141,7 +143,8 @@ final class CellForSecondVC: UICollectionViewCell {
     }
 
     // MARK: - Actions
-    //    @objc func didTapPlay(_ sender: UIButton) { //Если надо, чтобы только внутри ячейки, то использовать AVPlayer
+    ///Если надо, чтобы только внутри ячейки, то использовать AVPlayer
+    //    @objc func didTapPlay(_ sender: UIButton) {
     //        thumbnailImageView.isHidden = true
     //        guard let url = urlToVideoInFM else { return }
     //
