@@ -49,13 +49,6 @@ final class SecondVC: UIViewController {
         viewModel.makeVideosArrForUI()
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
-            self.viewModel.informIfNoVideo()
-        }
-    }
-
     // MARK: - Private methods
     private func setupView() {
         view.addSubview(collectionView)

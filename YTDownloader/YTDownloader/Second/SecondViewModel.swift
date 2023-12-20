@@ -69,10 +69,14 @@ final class SecondViewModel {
         self.videos.remove(at: indexPath.item)
 
         self.videos.count == 0 ? coordinator.popToRootVC() : ()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
+            self.informIfNoVideo()
+        }
         reloadCollectionWhenCompleted()
     }
 
-    func informIfNoVideo() {
+    // MARK: - Private methods
+    private func informIfNoVideo() {
         if self.videos.count == 0 {
             emptyVideoDelegate?.organizeAlertOfNoVideo()
         }
