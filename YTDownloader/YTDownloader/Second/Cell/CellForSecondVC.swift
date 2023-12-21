@@ -15,11 +15,10 @@ final class CellForSecondVC: UICollectionViewCell {
 
     // MARK: - Public properties
     var didTapDeleteClosure: (() -> Void)?
+    var didTapPlayClosure: (() -> Void)?
 
     // MARK: - Private properties
-    private var player: AVPlayer?
-    private var playerLayer: AVPlayerLayer?
-    private var urlToVideoInFM: URL?
+    private var urlOfVideoInFM: URL?
     
     private lazy var videoView: UIView = {
         let videoView = UIView()
@@ -72,18 +71,12 @@ final class CellForSecondVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        playerLayer?.frame = bounds
-    }
-
     // MARK: - Public methods
     ///c помощью UIMediaItem, которая  имеет date и URL  к mp4 в FileManager
     func configure(with uiMediaItem: MediaItemProtocol?) {
 
         if let uiModel = uiMediaItem {
-            ///путь до mp4 видеофайла, который лежит в FileManager
-            urlToVideoInFM = uiModel.mp4URLWithPathInFMForPlayer
+            urlOfVideoInFM = uiModel.mp4URLWithPathInFMForPlayer
             dateLabel.text = DateManager.createStringFromDate(uiModel.dateOfDownload, andFormatTo: "dd.MM.yy")
 
             if let imageData = try? Data(contentsOf: uiModel.jpgURLWithPathInFMForPlayer!),
@@ -92,12 +85,12 @@ final class CellForSecondVC: UICollectionViewCell {
             }
             /// так можно получить заставку  если в metadata не было  thumbnail
             else if uiModel.jpgURLWithPathInFMForPlayer == nil {
-                guard let url = urlToVideoInFM else { return }
+                guard let url = urlOfVideoInFM else { return }
 
                 let asset = AVAsset(url: url)
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
                 imageGenerator.appliesPreferredTrackTransform = true
-                let time = CMTimeMake(value: 1, timescale: 2) // Здесь можно указать нужное время для получения кадра
+                let time = CMTimeMake(value: 1, timescale: 2) // можно указать время кадра
                 if let imageRef = try? imageGenerator.copyCGImage(at: time, actualTime: nil) {
                     let thumbnail = UIImage(cgImage: imageRef)
                     thumbnailImageView.image = thumbnail
@@ -143,27 +136,8 @@ final class CellForSecondVC: UICollectionViewCell {
     }
 
     // MARK: - Actions
-    ///Если надо, чтобы только внутри ячейки, то использовать AVPlayer
-    //    @objc func didTapPlay(_ sender: UIButton) {
-    //        thumbnailImageView.isHidden = true
-    //        guard let url = urlToVideoInFM else { return }
-    //
-    //        let playerItem = AVPlayerItem(url: url)  //заставки также нет и видео не проигрывается
-    //        player = AVPlayer(playerItem: playerItem)
-    //        playerLayer = AVPlayerLayer(player: player)
-    //        playerLayer?.frame = videoView.bounds
-    //        videoView.layer.addSublayer(playerLayer!)
-    //        player?.play()
-    //    }
-
-    @objc func didTapPlay(_ sender: UIButton) { //а так на весь экран плеер открывается
-        guard let url = urlToVideoInFM else { return }
-        let player = AVPlayer(url: url)
-        let playerViewController = AVPlayerViewController()
-        playerViewController.player = player
-        UIApplication.shared.keyWindow?.rootViewController?.present(playerViewController, animated: true) {
-            playerViewController.player?.play()
-        }
+    @objc func didTapPlay(_ sender: UIButton) {
+        didTapPlayClosure?()
     }
 
     @objc func didTapDelete(_ sender: UIButton) {

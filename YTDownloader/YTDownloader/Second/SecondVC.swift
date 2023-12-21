@@ -76,13 +76,17 @@ extension SecondVC: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
         cell.configure(with: viewModel.videos[indexPath.item])
 
-
         cell.didTapDeleteClosure = { [weak self] in
             guard let strongSelf = self else {return}
 
             strongSelf.viewModel.didTapDeleteVideoAt(indexPath) {
                 collectionView.reloadData()
             }
+        }
+
+        cell.didTapPlayClosure = { [weak self] in
+            guard let strongSelf = self else {return}
+            strongSelf.viewModel.didTapPlay(video: strongSelf.viewModel.videos[indexPath.item])
         }
         return cell
     }

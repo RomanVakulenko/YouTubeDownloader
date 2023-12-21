@@ -24,7 +24,7 @@ final class FirstVC: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.backgroundColor = .red
-        label.text = "You Down"
+        label.text = "YouTubeDownloader"
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 19)
         label.textAlignment = .center
         label.textColor = .black

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import AVKit
 
 protocol FlowCoordinatorProtocol: AnyObject {
     func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol)
@@ -53,7 +54,14 @@ final class VideoFlowCoordinator {
         return vc
     }
 
+    private func createPlayerVCWith(url: URL) -> AVPlayerViewController {
+        let playerViewController = AVPlayerViewController()
+        let player = AVPlayer(url: url)
+        playerViewController.player = player
+        return playerViewController
+    }
 }
+
 
 // MARK: - CoordinatorProtocol
 extension VideoFlowCoordinator: CoordinatorProtocol {
@@ -70,6 +78,12 @@ extension VideoFlowCoordinator: FlowCoordinatorProtocol {
     func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol) {
         let secondVC = createSecondVC(emptyVideoDelegate: emptyVideoDelegate)
         navigationController.pushViewController(secondVC, animated: true)
+    }
+
+    func doPlayerPlayVideoWith(url: URL) {
+        let playerVC = createPlayerVCWith(url: url)
+        navigationController.pushViewController(playerVC, animated: true)
+        playerVC.player?.play()
     }
 
     func popToRootVC() {

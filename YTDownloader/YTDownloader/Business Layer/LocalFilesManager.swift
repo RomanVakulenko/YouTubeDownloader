@@ -128,16 +128,17 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 self.statusClosure?(State.loading)
             }
             let urlRequest = URLRequest(url: wwwlink)
-            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+            let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
                 guard let data,
                       let response = response as? HTTPURLResponse else {
                     print("Не смог скачать data")
                     return
                 }
                 let statusCode = response.statusCode
-                if statusCode < 200 && statusCode > 299 {//прокидывать ошибку не дает dataTask
+                if statusCode < 200 && statusCode > 299 {
                     if file  == .video {
                         self.statusClosure?(State.badURL(alertText: "Сервер не отвечает"))
+// throw NetworkServiceErrors.networkRouterErrors(error: .serverErrorWith(statusCode)) //прокидывать ошибку не дает dataTask
                     }
                 }
 
@@ -156,6 +157,8 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
 
                 } catch {
                     switch error {
+                    case NetworkServiceErrors.networkRouterErrors(error: .noInternetConnection):
+                        self.statusClosure?(State.badURL(alertText: RouterErrors.noInternetConnection.description))
                     case NetworkServiceErrors.fileManagerErrors(error: .unableToMove):
                         print(error.localizedDescription)
                     case NetworkServiceErrors.fileManagerErrors(error: .unableToSaveToPHLibrary):

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Photos
+import AVKit
 
 
 protocol EmptyVideoDelegateProtocol: AnyObject {
@@ -48,6 +49,9 @@ final class SecondViewModel {
         }
     }
 
+    func didTapPlay(video: MediaItemProtocol) {
+        self.coordinator.doPlayerPlayVideoWith(url: video.mp4URLWithPathInFMForPlayer)
+    }
 
     func didTapDeleteVideoAt(_ indexPath: IndexPath,
                              reloadCollectionWhenCompleted: @escaping (() -> Void)) {
@@ -74,6 +78,7 @@ final class SecondViewModel {
         }
         reloadCollectionWhenCompleted()
     }
+    
 
     // MARK: - Private methods
     private func informIfNoVideo() {
