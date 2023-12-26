@@ -16,7 +16,7 @@ protocol EmptyVideoDelegateProtocol: AnyObject {
 }
 
 
-final class SecondViewModel {
+final class ShowViewModel {
 
     // MARK: - Public properties
     var videos: [UIMediaItem] = []
@@ -58,7 +58,7 @@ final class SecondViewModel {
 
         let videoToDelete = videos[indexPath.item]
 
-        ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM и перезаписываем содержание массива  в FM по адресу JsonModelsURL.inFM
+        ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM
         ///и перезаписываем содержание массива DataModelsStoredInFM в FM по адресу JsonModelsURL.inFM
         Storage.shared.dataModelsStoredInFM.removeAll(where: { $0.name == videoToDelete.name })
 
@@ -71,10 +71,11 @@ final class SecondViewModel {
 
         ///удаляем видео из массива для коллекции
         self.videos.remove(at: indexPath.item)
-
-        self.videos.count == 0 ? coordinator.popToRootVC() : ()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
-            self.informIfNoVideo()
+            self.videos.count == 0 ? self.coordinator.popToRootVC() : ()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                self.informIfNoVideo()
+            }
         }
         reloadCollectionWhenCompleted()
     }

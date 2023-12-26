@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class HeaderForSecondVC: UICollectionReusableView {
+final class HeaderForShowVC: UICollectionReusableView {
 
     // MARK: - Private properties
     private lazy var titleLabel: UILabel = {
@@ -32,7 +32,8 @@ final class HeaderForSecondVC: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - Private methods
     private func layout() {
         NSLayoutConstraint.activate([
                 titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

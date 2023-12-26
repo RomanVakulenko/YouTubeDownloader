@@ -30,11 +30,11 @@ final class VideoFlowCoordinator {
         let mapper = DataMapper()
         let fileManager = LocalFilesManager(mapper: mapper)
         let networkService = YTNetworkService(manager: fileManager, mapper: mapper)
-        let viewModel = FirstViewModel(coordinator: self,
+        let viewModel = DownloadViewModel(coordinator: self,
                                        networkService: networkService,
                                        fManager: fileManager
         )
-        let firstVC = FirstVC(viewModel: viewModel)
+        let firstVC = DownloadViewController(viewModel: viewModel)
         let navController = UINavigationController(rootViewController: firstVC)
         navigationController = navController
         return navigationController
@@ -45,12 +45,12 @@ final class VideoFlowCoordinator {
         let mapper = DataMapper()
         let fileManager = LocalFilesManager(mapper: mapper)
         let networkService = YTNetworkService(manager: fileManager, mapper: mapper)
-        let viewModel = SecondViewModel(coordinator: self,
+        let viewModel = ShowViewModel(coordinator: self,
                                         emptyVideoAlertDelegate: emptyVideoDelegate,
                                         mapper: mapper,
                                         ytNetworkService: networkService
         )
-        let vc = SecondVC(viewModel: viewModel)
+        let vc = ShowViewController(viewModel: viewModel)
         return vc
     }
 

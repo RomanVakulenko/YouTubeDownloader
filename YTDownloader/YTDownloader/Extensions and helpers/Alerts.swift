@@ -20,13 +20,11 @@ enum ShowAlert {
             message: message,
             preferredStyle: .alert
         )
-
         alertController.addAction(UIAlertAction(title: "Ok", style: .destructive))
 
         DispatchQueue.main.async {
             vc.present(alertController, animated: true)
         }
-
     }
 
 }

@@ -9,10 +9,10 @@ import Foundation
 import UIKit
 import Photos
 
-final class SecondVC: UIViewController {
+final class ShowViewController: UIViewController {
 
     // MARK: - Private properties
-    private var viewModel: SecondViewModel
+    private var viewModel: ShowViewModel
 
     private lazy var collectionLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -24,8 +24,8 @@ final class SecondVC: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
-        collection.register(HeaderForSecondVC.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderForSecondVC.identifier)
-        collection.register(CellForSecondVC.self, forCellWithReuseIdentifier: CellForSecondVC.identifier)
+        collection.register(HeaderForShowVC.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderForShowVC.identifier)
+        collection.register(CellForShowVC.self, forCellWithReuseIdentifier: CellForShowVC.identifier)
         collection.delegate = self
         collection.dataSource = self
         return collection
@@ -33,7 +33,7 @@ final class SecondVC: UIViewController {
 
 
     // MARK: - Init
-    init(viewModel: SecondViewModel) {
+    init(viewModel: ShowViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -67,26 +67,25 @@ final class SecondVC: UIViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension SecondVC: UICollectionViewDataSource {
+extension ShowViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.videos.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForSecondVC.identifier, for: indexPath) as? CellForSecondVC else { return  UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellForShowVC.identifier, for: indexPath) as? CellForShowVC else { return  UICollectionViewCell() }
         cell.configure(with: viewModel.videos[indexPath.item])
 
         cell.didTapDeleteClosure = { [weak self] in
-            guard let strongSelf = self else {return}
-
+            guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
             strongSelf.viewModel.didTapDeleteVideoAt(indexPath) {
                 collectionView.reloadData()
             }
         }
 
         cell.didTapPlayClosure = { [weak self] in
-            guard let strongSelf = self else {return}
-            strongSelf.viewModel.didTapPlay(video: strongSelf.viewModel.videos[indexPath.item])
+            guard let self else {return}
+            self.viewModel.didTapPlay(video: self.viewModel.videos[indexPath.item])
         }
         return cell
     }
@@ -95,9 +94,9 @@ extension SecondVC: UICollectionViewDataSource {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: HeaderForSecondVC.identifier,
-                for: indexPath)
+                            ofKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: HeaderForShowVC.identifier,
+                            for: indexPath)
             return header
         default:
             return UICollectionReusableView()
@@ -105,12 +104,9 @@ extension SecondVC: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
-extension SecondVC: UICollectionViewDelegate {
+// MARK: - UICollectionViewDelegateFlowLayout
 
-}
-
-extension SecondVC: UICollectionViewDelegateFlowLayout {
+extension ShowViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: Constants.headerHeight)

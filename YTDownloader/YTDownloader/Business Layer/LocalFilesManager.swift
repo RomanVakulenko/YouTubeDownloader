@@ -29,7 +29,6 @@ final class LocalFilesManager {
     // MARK: - Public properties
     let fileManager = FileManager.default
     let userDefaults = UserDefaults.standard
-
     var statusClosure: ((State) -> Void)?
     var progressClosure: ((Float) ->Void)?
     var assetID: String?
@@ -84,14 +83,13 @@ final class LocalFilesManager {
 
     // MARK: - Private methods
     private func saveVideoToPHAndAssetToUD(urlWithoutPath: URL, nameAndExt: String) throws {
-        ///сохраняем в Photo Library (была  задача или из-за уведомления от системы так решил)
         try PHPhotoLibrary.shared().performChangesAndWait {
             let request = PHAssetCreationRequest.forAsset()
             request.addResource(with: .video, fileURL: urlWithoutPath, options: nil) // бывает вариант с data
             if let assetID = request.placeholderForCreatedAsset?.localIdentifier {
                 self.assetID = assetID
-                ///сохраним в UD - так удобнее, чем выбрасывать assetID в YTNetworkService (для модели)
-                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")//ID файла для удаления video из PhotoLibrary
+                ///сохраним в UD ID для удаления - так удобнее, чем выбрасывать assetID в YTNetworkService (для модели)
+                self.userDefaults.set(assetID, forKey: "\(nameAndExt)")
             }
         }
     }
@@ -103,7 +101,6 @@ final class LocalFilesManager {
 
 
 // MARK: - Extensions LocalFilesManagerProtocol
-
 extension LocalFilesManager: LocalFilesManagerProtocol {
 
     func downloadFileAndSaveToPhotoGallery(_ file: File,
@@ -138,10 +135,9 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                 if statusCode < 200 && statusCode > 299 {
                     if file  == .video {
                         self.statusClosure?(State.badURL(alertText: "Сервер не отвечает"))
-// throw NetworkServiceErrors.networkRouterErrors(error: .serverErrorWith(statusCode)) //прокидывать ошибку не дает dataTask
+                        print("serverErrorWith \(statusCode)") //прокидывать ошибку не дает dataTask
                     }
                 }
-
                 ///Сохраняем file (mp4/jpg) в FileManager
                 self.fileManager.createFile(atPath: urlOfMp4SavedInFM.path, contents: data)
 
@@ -152,26 +148,37 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
                         try self.saveVideoToPHAndAssetToUD(urlWithoutPath: urlOfMp4SavedInFM, nameAndExt: nameAndExt)
                         self.statusClosure?(State.loadedAndSaved)
                     case .photo:
-                        print("Заставку не сохраняем в PhotoLibrary, иначе, в момент сохранения при первом запуске, системный запрос на работу с PhotoLibrary сбивает изменение progress'a, да и из PhotoLibrary photo не удалить вроде как кодом")
+                        print("Заставку не сохраняем в PhotoLibrary(PH), иначе, в момент сохранения при первом запуске, системный запрос на работу с PH сбивает изменение progress'a, да и из PH photo не удалить кодом")
                     }
-
+                } catch let error as URLError {
+                    if error.networkUnavailableReason == .cellular {
+                        print("Сотовая сеть отключена")
+                    } else if let reason = error.networkUnavailableReason {
+                        print("Сеть недоступна: \(reason)")
+                    }
+                    switch error.code {
+                    case .badURL:
+                        print("Некорректный URL")
+                    case .networkConnectionLost:
+                        print("Соединение было разорвано")
+                    case .notConnectedToInternet:
+                        self.statusClosure?(State.badURL(alertText: RouterErrors.noInternetConnection.description))
+                        print("Нет подключения к интернету")
+                    default:
+                        print("Неизвестная типа URLError")
+                    }
                 } catch {
                     switch error {
-                    case NetworkServiceErrors.networkRouterErrors(error: .noInternetConnection):
-                        self.statusClosure?(State.badURL(alertText: RouterErrors.noInternetConnection.description))
-                    case NetworkServiceErrors.fileManagerErrors(error: .unableToMove):
-                        print(error.localizedDescription)
                     case NetworkServiceErrors.fileManagerErrors(error: .unableToSaveToPHLibrary):
                         print(error.localizedDescription)
                     default:
-                        print("Error saving \(file) to Photo Library: \(error.localizedDescription)")
+                        self.statusClosure?(State.badURL(alertText: NetworkServiceErrors.show.descriptionForUser))
                     }
                     if file  == .video {
                         self.statusClosure?(State.badURL(alertText: "Попробуйте позже"))
                     }
                     return
                 }
-
             }
             ///следим за прогрессом загрузки
             if file  == .video {
@@ -186,3 +193,4 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
         }
     }
 }
+

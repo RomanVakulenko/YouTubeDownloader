@@ -11,10 +11,8 @@ extension String {
     ///extracts YouTube video id
   func extractYoutubeId() -> String? {
     let pattern = "((?<=(v|V)/)|(?<=be/)|(?<=(\\?|\\&)v=)|(?<=embed/)|(?<=shorts/))([\\w-]++)"
-    if let matchRange = self.range(of: pattern, options: .regularExpression) {
-        return String(self[matchRange])
-    } else {
-        return .none
-    }
+    guard let matchRange = self.range(of: pattern, options: .regularExpression) else { return .none }
+    return String(self[matchRange])
   }
+    
 }

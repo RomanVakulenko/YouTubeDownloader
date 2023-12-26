@@ -11,7 +11,7 @@ import AVKit
 import Photos
 
 
-final class CellForSecondVC: UICollectionViewCell {
+final class CellForShowVC: UICollectionViewCell {
 
     // MARK: - Public properties
     var didTapDeleteClosure: (() -> Void)?
@@ -83,7 +83,7 @@ final class CellForSecondVC: UICollectionViewCell {
                let image = UIImage(data: imageData) {
                 thumbnailImageView.image = image
             }
-            /// так можно получить заставку  если в metadata не было  thumbnail
+            /// так можно получить заставку, если в metadata не будет thumbnail
             else if uiModel.jpgURLWithPathInFMForPlayer == nil {
                 guard let url = urlOfVideoInFM else { return }
 
