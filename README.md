@@ -7,7 +7,7 @@
 
 **Stack**
 - MVVM+С
-- Downloading Progress, State Machine
+- Progress, State Machine, Alerts
 - FileManager, PhotoLibrary, UserDefaults
 - XCDYouTubeKit, YouTubeKit, AVKit
 
