@@ -11,6 +11,7 @@ import AVKit
 
 protocol FlowCoordinatorProtocol: AnyObject {
     func pushSecondVC(emptyVideoDelegate: EmptyVideoDelegateProtocol)
+    func doPlayerPlayVideoWith(url: URL)
     func popToRootVC()
 }
 

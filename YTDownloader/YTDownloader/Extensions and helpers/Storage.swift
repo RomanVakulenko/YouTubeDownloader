@@ -10,7 +10,7 @@ import Foundation
 final class Storage {
 
     // MARK: - Public properties
-    public static let shared = Storage()
+    public static let shared = Storage(mapper: DataMapper())
 
     public var dataModelsStoredInFM: [VideoItemData] = [] {
         didSet{
@@ -18,11 +18,14 @@ final class Storage {
         }
     }
 
-    // MARK: - Init
-    private init() {}
-
     // MARK: - Private properties
-    private let mapper = DataMapper()
+    private let mapper: MapperProtocol
+
+
+    // MARK: - Init
+    private init(mapper: MapperProtocol) {
+        self.mapper = mapper
+    }
 
     // MARK: - Private methods
     private func encodeAndSaveModelsArrAsJsonFileToFM(dataModels: [VideoItemData]) {

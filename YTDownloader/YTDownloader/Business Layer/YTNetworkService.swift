@@ -35,18 +35,7 @@ final class YTNetworkService {
     }
 
 
-    // MARK: - Public methods
-    func deleteFilesFromFMAndPhotoLibraryBy(fileName: String, mp4URL: URL, jpgURL: URL?) {
-        let nameAndExt = fileName + ".mp4"
-        do {
-            try self.fileManager.deleteFileFromPhotoLibraryBy(nameAndExt: nameAndExt,
-                                                              mp4URL: mp4URL,
-                                                              jpgURL: jpgURL)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-
+    // MARK: - Private methods
     private func fetchVideoInfo(youTubeID: String,
                                 onCompleted: @escaping (_ video: XCDYouTubeVideo) -> Void) {
         XCDYouTubeClient.default().getVideoWithIdentifier(youTubeID) { video, error in
@@ -115,7 +104,6 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                             print("streamURL error")
                             return
                         }
-
                         try self.fileManager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: videoThumbnail, filename: self.fileName!, extension: "jpg")
                         try self.fileManager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
                     } catch {
@@ -123,6 +111,17 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                     }
                 }
             }
+        }
+    }
+
+    func deleteFilesFromFMAndPhotoLibraryBy(fileName: String, mp4URL: URL, jpgURL: URL?) {
+        let nameAndExt = fileName + ".mp4"
+        do {
+            try self.fileManager.deleteFileFromPhotoLibraryBy(nameAndExt: nameAndExt,
+                                                              mp4URL: mp4URL,
+                                                              jpgURL: jpgURL)
+        } catch {
+            print(error.localizedDescription)
         }
     }
 

@@ -12,12 +12,12 @@ import Photos
 protocol LocalFilesManagerProtocol: AnyObject {
     var statusClosure: ((State) -> Void)? { get set }
     var progressClosure: ((Float) ->Void)? { get set }
+    func checkIfVideoExist(path: String) -> Bool
     func downloadFileAndSaveToPhotoGallery(_ file: File,
                                            wwwlink: URL,
                                            filename: String,
                                            extension ext: String) throws
     func deleteFileFromPhotoLibraryBy(nameAndExt: String, mp4URL: URL, jpgURL: URL?) throws
-    func checkIfVideoExist(path: String) -> Bool
 }
 
 enum File {
@@ -42,45 +42,6 @@ final class LocalFilesManager {
         self.mapper = mapper
     }
 
-    // MARK: - Public methods
-    func deleteFileFromPhotoLibraryBy(nameAndExt: String, mp4URL: URL, jpgURL: URL?) throws {
-        ///удаляем из FM mp4 и jpg
-        if fileManager.fileExists(atPath: mp4URL.path) {
-            do {
-                guard let jpgURL else { return }
-                try self.fileManager.removeItem(at: mp4URL)
-                try self.fileManager.removeItem(at: jpgURL)
-                print("File at \(mp4URL) was removed from FileManager")
-                print("File at \(jpgURL) was removed from FileManager")
-            } catch {
-                throw NetworkServiceErrors.fileManagerErrors(error: .unableToDelete)
-            }
-        }
-        ///удаляем из PhotoLibrary
-        var assetsLocalIDs = [String]()
-        let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
-        guard let oneID else { return }
-        assetsLocalIDs.append(oneID)
-
-        let allAssets = PHAsset.fetchAssets(withLocalIdentifiers: assetsLocalIDs, options: nil)
-        if let assetToDelete = allAssets.firstObject {
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.deleteAssets([assetToDelete] as NSArray)
-            }) { success, error in
-                if success {
-                    print("Файл \(nameAndExt) удален успешно из PhotoLibrary")
-                } else {
-                    print("Ошибка удаления файла: \(error!.localizedDescription)")
-                }
-            }
-        }
-    }
-
-    func checkIfVideoExist(path: String) -> Bool {
-        return FileManager.default.fileExists(atPath: path)
-    }
-
-
     // MARK: - Private methods
     private func saveVideoToPHAndAssetToUD(urlWithoutPath: URL, nameAndExt: String) throws {
         try PHPhotoLibrary.shared().performChangesAndWait {
@@ -102,6 +63,10 @@ final class LocalFilesManager {
 
 // MARK: - Extensions LocalFilesManagerProtocol
 extension LocalFilesManager: LocalFilesManagerProtocol {
+
+    func checkIfVideoExist(path: String) -> Bool {
+        return FileManager.default.fileExists(atPath: path)
+    }
 
     func downloadFileAndSaveToPhotoGallery(_ file: File,
                                            wwwlink: URL,
@@ -192,5 +157,39 @@ extension LocalFilesManager: LocalFilesManagerProtocol {
             dataTask.resume()
         }
     }
+
+    func deleteFileFromPhotoLibraryBy(nameAndExt: String, mp4URL: URL, jpgURL: URL?) throws {
+        ///удаляем из FM mp4 и jpg
+        if fileManager.fileExists(atPath: mp4URL.path) {
+            do {
+                guard let jpgURL else { return }
+                try self.fileManager.removeItem(at: mp4URL)
+                try self.fileManager.removeItem(at: jpgURL)
+                print("File at \(mp4URL) was removed from FileManager")
+                print("File at \(jpgURL) was removed from FileManager")
+            } catch {
+                throw NetworkServiceErrors.fileManagerErrors(error: .unableToDelete)
+            }
+        }
+        ///удаляем из PhotoLibrary
+        var assetsLocalIDs = [String]()
+        let oneID = userDefaults.object(forKey: "\(nameAndExt)") as? String
+        guard let oneID else { return }
+        assetsLocalIDs.append(oneID)
+
+        let allAssets = PHAsset.fetchAssets(withLocalIdentifiers: assetsLocalIDs, options: nil)
+        if let assetToDelete = allAssets.firstObject {
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.deleteAssets([assetToDelete] as NSArray)
+            }) { success, error in
+                if success {
+                    print("Файл \(nameAndExt) удален успешно из PhotoLibrary")
+                } else {
+                    print("Ошибка удаления файла: \(error!.localizedDescription)")
+                }
+            }
+        }
+    }
+    
 }
 

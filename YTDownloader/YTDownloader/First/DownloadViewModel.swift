@@ -40,12 +40,12 @@ final class DownloadViewModel {
     var photoURL: URL?
     
     // MARK: - Private properties
-    private weak var coordinator: VideoFlowCoordinator?
+    private weak var coordinator: FlowCoordinatorProtocol?
     private let networkService: YTNetworkServiceProtocol
     
     
     // MARK: - Init
-    init(coordinator: VideoFlowCoordinator, networkService: YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
+    init(coordinator: FlowCoordinatorProtocol, networkService: YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
         self.coordinator = coordinator
         self.networkService = networkService
         self.fManager = fManager

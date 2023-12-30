@@ -22,18 +22,21 @@ final class ShowViewModel {
     var videos: [UIMediaItem] = []
 
     // MARK: - Private properties
-    private let coordinator: VideoFlowCoordinator
+    private let coordinator: FlowCoordinatorProtocol
     private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
     private let mapper: MapperProtocol
     private let ytNetworkService: YTNetworkServiceProtocol?
 
 
     // MARK: - Init
-    init(coordinator: VideoFlowCoordinator, emptyVideoAlertDelegate: EmptyVideoDelegateProtocol, mapper: MapperProtocol, ytNetworkService: YTNetworkServiceProtocol) {
-        self.coordinator = coordinator
-        self.emptyVideoDelegate = emptyVideoAlertDelegate
-        self.mapper = mapper
-        self.ytNetworkService = ytNetworkService
+    init(coordinator: FlowCoordinatorProtocol,
+         emptyVideoAlertDelegate: EmptyVideoDelegateProtocol,
+         mapper: MapperProtocol,
+         ytNetworkService: YTNetworkServiceProtocol) {
+            self.coordinator = coordinator
+            self.emptyVideoDelegate = emptyVideoAlertDelegate
+            self.mapper = mapper
+            self.ytNetworkService = ytNetworkService
     }
 
     // MARK: - Public methods
@@ -57,7 +60,6 @@ final class ShowViewModel {
                              reloadCollectionWhenCompleted: @escaping (() -> Void)) {
 
         let videoToDelete = videos[indexPath.item]
-
         ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM
         ///и перезаписываем содержание массива DataModelsStoredInFM в FM по адресу JsonModelsURL.inFM
         Storage.shared.dataModelsStoredInFM.removeAll(where: { $0.name == videoToDelete.name })
