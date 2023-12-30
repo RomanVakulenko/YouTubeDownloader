@@ -6,7 +6,7 @@
 - plays video at second screen, you can delete it.
 
 **Stack**
-- MVVM+С
+- MVVM+С, dependencies injection using protocols
 - Progress, State Machine, Alerts
 - FileManager, PhotoLibrary, UserDefaults
 - XCDYouTubeKit, YouTubeKit, AVKit
