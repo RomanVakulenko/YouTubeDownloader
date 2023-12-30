@@ -107,6 +107,7 @@ extension YTNetworkService: YTNetworkServiceProtocol {
                         try self.fileManager.downloadFileAndSaveToPhotoGallery(File.photo, wwwlink: videoThumbnail, filename: self.fileName!, extension: "jpg")
                         try self.fileManager.downloadFileAndSaveToPhotoGallery(File.video, wwwlink: streamURL, filename: self.fileName!, extension: "mp4")
                     } catch {
+                        print("Ошибка загрузки")
                         throw error
                     }
                 }
