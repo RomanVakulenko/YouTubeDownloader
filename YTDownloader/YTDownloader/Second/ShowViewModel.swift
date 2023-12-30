@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Photos
+import AVKit
 
 
 protocol EmptyVideoDelegateProtocol: AnyObject {
@@ -15,24 +16,27 @@ protocol EmptyVideoDelegateProtocol: AnyObject {
 }
 
 
-final class SecondViewModel {
+final class ShowViewModel {
 
     // MARK: - Public properties
     var videos: [UIMediaItem] = []
 
     // MARK: - Private properties
-    private let coordinator: VideoFlowCoordinator
+    private let coordinator: FlowCoordinatorProtocol
     private weak var emptyVideoDelegate: EmptyVideoDelegateProtocol?
     private let mapper: MapperProtocol
     private let ytNetworkService: YTNetworkServiceProtocol?
 
 
     // MARK: - Init
-    init(coordinator: VideoFlowCoordinator, emptyVideoAlertDelegate: EmptyVideoDelegateProtocol, mapper: MapperProtocol, ytNetworkService: YTNetworkServiceProtocol) {
-        self.coordinator = coordinator
-        self.emptyVideoDelegate = emptyVideoAlertDelegate
-        self.mapper = mapper
-        self.ytNetworkService = ytNetworkService
+    init(coordinator: FlowCoordinatorProtocol,
+         emptyVideoAlertDelegate: EmptyVideoDelegateProtocol,
+         mapper: MapperProtocol,
+         ytNetworkService: YTNetworkServiceProtocol) {
+            self.coordinator = coordinator
+            self.emptyVideoDelegate = emptyVideoAlertDelegate
+            self.mapper = mapper
+            self.ytNetworkService = ytNetworkService
     }
 
     // MARK: - Public methods
@@ -48,13 +52,15 @@ final class SecondViewModel {
         }
     }
 
+    func didTapPlay(video: MediaItemProtocol) {
+        self.coordinator.doPlayerPlayVideoWith(url: video.mp4URLWithPathInFMForPlayer)
+    }
 
     func didTapDeleteVideoAt(_ indexPath: IndexPath,
                              reloadCollectionWhenCompleted: @escaping (() -> Void)) {
 
         let videoToDelete = videos[indexPath.item]
-
-        ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM и перезаписываем содержание массива  в FM по адресу JsonModelsURL.inFM
+        ///удаляем конкретную dataModel из Storage из массива dataModelsStoredInFM
         ///и перезаписываем содержание массива DataModelsStoredInFM в FM по адресу JsonModelsURL.inFM
         Storage.shared.dataModelsStoredInFM.removeAll(where: { $0.name == videoToDelete.name })
 
@@ -67,13 +73,15 @@ final class SecondViewModel {
 
         ///удаляем видео из массива для коллекции
         self.videos.remove(at: indexPath.item)
-
-        self.videos.count == 0 ? coordinator.popToRootVC() : ()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
-            self.informIfNoVideo()
+            self.videos.count == 0 ? self.coordinator.popToRootVC() : ()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                self.informIfNoVideo()
+            }
         }
         reloadCollectionWhenCompleted()
     }
+    
 
     // MARK: - Private methods
     private func informIfNoVideo() {

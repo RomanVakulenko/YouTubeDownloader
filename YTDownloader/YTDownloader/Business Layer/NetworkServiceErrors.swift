@@ -28,16 +28,6 @@ enum NetworkServiceErrors: Error, CustomStringConvertible {
     }
 
     var descriptionForUser: String {
-        switch self {
-//        case .networkRouterErrors(let error):
-//            switch error {
-//            case .noInternetConnection:
-//                return error.description //если отловить NSURLErrorBadURL (и подобные) - должен увидеть реальную ошибку
-//            default:
-//                return "Ошибка соединения с сервером"
-//            }
-        default:
-            return "Ошибка соединения с сервером"
-        }
+        "Ошибка соединения с сервером"
     }
 }

@@ -8,14 +8,9 @@
 import Foundation
 import UIKit
 import XCDYouTubeKit
-//import YouTubeKit
 
-protocol NetworkAPIProtocol: AnyObject {
-    func downloadVideo(at videoID: String, and url: URL)
-}
-
-protocol FirstVCViewModelProtocol: AnyObject {
-    var closureChangingState: ((State) -> Void)? { get set }
+protocol DownloadProtocol: AnyObject {
+    func downloadAndSaveVideo(at videoID: String, and url: URL)
 }
 
 // MARK: - Enum
@@ -29,7 +24,7 @@ enum State {
     case thereIsNoAnyVideo
 }
 
-final class FirstViewModel {
+final class DownloadViewModel {
     
     // MARK: - Public properties
     var closureChangingState: ((State) -> Void)?
@@ -45,12 +40,12 @@ final class FirstViewModel {
     var photoURL: URL?
     
     // MARK: - Private properties
-    private weak var coordinator: VideoFlowCoordinator?
+    private weak var coordinator: FlowCoordinatorProtocol?
     private let networkService: YTNetworkServiceProtocol
     
     
     // MARK: - Init
-    init(coordinator: VideoFlowCoordinator, networkService:YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
+    init(coordinator: FlowCoordinatorProtocol, networkService: YTNetworkServiceProtocol, fManager: LocalFilesManagerProtocol) {
         self.coordinator = coordinator
         self.networkService = networkService
         self.fManager = fManager
@@ -63,14 +58,14 @@ final class FirstViewModel {
 }
 
 
-// MARK: - FirstVCViewModelProtocol
-extension FirstViewModel: NetworkAPIProtocol {
-
-    func downloadVideo(at videoID: String, and url: URL) {
+// MARK: - DownloadProtocol
+extension DownloadViewModel: DownloadProtocol {
+    
+    func downloadAndSaveVideo(at videoID: String, and url: URL) {
         state = .processing //сразу после того как нажали на download
 
         do {
-            try networkService.downloadVideo(videoIdentifier: videoID, videoURL: url)
+            try self.networkService.downloadAndSaveVideo(videoIdentifier: videoID, videoURL: url)
 
             fManager.statusClosure = { [weak self] status in
                 switch status {
@@ -100,7 +95,7 @@ extension FirstViewModel: NetworkAPIProtocol {
 }
 
 // MARK: - EmptyVideoDelegateProtocol
-extension FirstViewModel: EmptyVideoDelegateProtocol {
+extension DownloadViewModel: EmptyVideoDelegateProtocol {
 
     func organizeAlertOfNoVideo() {
         self.state = .thereIsNoAnyVideo

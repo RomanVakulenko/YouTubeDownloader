@@ -45,7 +45,6 @@ extension DataMapper: MapperProtocol {
             let decodedModel = try self.decoder.decode(toArrStruct, from: data)
             return decodedModel
         } catch let error as DecodingError {
-            // Чтобы узнать место появления ошибки так делают??
             let errorLocation = "in File: \(#file), at Line: \(#line), Column: \(#column)"
             throw MapperError.failAtMapping(reason: "\(error), \(errorLocation)")
         } catch {

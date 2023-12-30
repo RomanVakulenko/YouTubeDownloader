@@ -10,19 +10,19 @@ enum RouterErrors: Error, CustomStringConvertible {
     //    case badURL
     case fetchingXCDVideoError
     case noInternetConnection
-    //    case serverErrorWith(_ statusCode: Int)
+    case serverErrorWith(_ statusCode: Int)
+
     var description: String {
         switch self {
-
             //        case .badURL:
             //            return "Invalid URL"
         case .fetchingXCDVideoError:
             return "Error fetching XCD video"
         case .noInternetConnection:
             return "Нет соединения с интернетом"
-            //        case .serverErrorWith(let statusCode):
-            //            print(statusCode)
-            //            return "Bad status code - \(statusCode)"
+        case .serverErrorWith(let statusCode):
+            print(statusCode)
+            return "Bad status code - \(statusCode)"
         }
     }
 }

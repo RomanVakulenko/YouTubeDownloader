@@ -9,10 +9,12 @@ import Foundation
 import UIKit
 
 
-final class FirstVC: UIViewController {
+final class DownloadViewController: UIViewController {
 
     // MARK: - Private properties
-    private var viewModel: FirstViewModel
+    var startDate: Date?
+    var stopDate: Date?
+    private var viewModel: DownloadViewModel
 
     private let baseView: UIView = {
         let view = UIView()
@@ -24,7 +26,7 @@ final class FirstVC: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.backgroundColor = .red
-        label.text = "You Down"
+        label.text = "YouTubeDownloader"
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 19)
         label.textAlignment = .center
         label.textColor = .black
@@ -45,7 +47,8 @@ final class FirstVC: UIViewController {
         textField.alpha = 0.8
         textField.backgroundColor = .systemGray6
         textField.autocapitalizationType = .none
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textField.frame.height))
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0,
+                                                  width: 15, height: textField.frame.height))
         textField.leftViewMode = .always
         return textField
     }()
@@ -73,7 +76,10 @@ final class FirstVC: UIViewController {
     }()
 
     private lazy var boxProgressView: UIView = {
-        let boxView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width * 0.65, height: 72))
+        let boxView = UIView(frame: CGRect(x: 0,
+                                           y: 0,
+                                           width: self.view.frame.width * 0.65, height: 72)
+        )
         boxView.backgroundColor = .none
         boxView.layer.borderColor = .none
         boxView.center = self.view.center
@@ -86,14 +92,14 @@ final class FirstVC: UIViewController {
                                                  y: boxProgressView.frame.height * 0.8,
                                                  width: boxProgressView.frame.width * 0.8,
                                                  height: 2))
-
         pView.progressTintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
-//        pView.progress = 0.0
         return pView
     }()
 
     private lazy var titleProgress: UILabel = {
-        let titleLbl = UILabel(frame: CGRect(x: 0, y: 0, width: progressView.frame.width, height: progressView.frame.minY - 10))
+        let titleLbl = UILabel(frame: CGRect(x: 0, y: 0,
+                                             width: progressView.frame.width,
+                                             height: progressView.frame.minY - 10))
         titleLbl.text = title ?? ""
         titleLbl.font = UIFont.init(name: "DINCondensed-Bold", size: 30)
         titleLbl.textAlignment = .center
@@ -103,8 +109,9 @@ final class FirstVC: UIViewController {
         return titleLbl
     }()
 
+
     // MARK: - Init
-    init(viewModel: FirstViewModel) {
+    init(viewModel: DownloadViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -165,44 +172,46 @@ final class FirstVC: UIViewController {
     private func bindViewModel() {
         DispatchQueue.main.async {
             self.viewModel.closureChangingState = { [weak self] state in
-                guard let strongSelf = self else {return} //гарантируем, что код кложуры выполнится, даже если мы быстро вышли с экрана (как пример)
+                guard let self else {return}
 
                 DispatchQueue.main.async {
                     switch state {
                     case .none:
                         ()
-
                     case .processing:
                         Show.spinner.startAnimating()
 
                     case .fileExists:
                         Show.spinner.stopAnimating()
-                        ShowAlert.type(.fileExists, at: strongSelf, message: "File already exists, search field is cleared for your convenience")
-                        strongSelf.referenceTextField.text = nil
+                        ShowAlert.type(.fileExists, at: self, message: "File already exists, search field is cleared for your convenience")
+                        self.referenceTextField.text = nil
 
                     case .loading:
                         Show.spinner.stopAnimating()
+                        self.startDate = Date()
                         //progress
-                        strongSelf.progressView.progress = 0.0
-                        strongSelf.boxProgressView.isHidden = false
-                        strongSelf.viewModel.fManager.progressClosure = { observingProgress in
-                            strongSelf.progressView.progress = observingProgress
+                        self.progressView.progress = 0.0
+                        self.boxProgressView.isHidden = false
+                        self.viewModel.fManager.progressClosure = { observingProgress in
+                            self.progressView.progress = observingProgress
                         }
 
                     case .loadedAndSaved:
-                        strongSelf.boxProgressView.isHidden = true
-                        ShowAlert.type(.videoSavedToPhotoLibrary, at: strongSelf, message: "Video saved")
-                        strongSelf.referenceTextField.text = nil
+                        self.boxProgressView.isHidden = true
+                        self.stopDate = Date()
+                        print("Время загрузки: \(self.stopDate!.timeIntervalSince(self.startDate!)) секунд")
+                        ShowAlert.type(.videoSavedToPhotoLibrary, at: self, message: "Video saved")
+                        self.referenceTextField.text = nil
 
                     case .badURL(alertText: let alertTextForUser):
                         Show.spinner.stopAnimating()
-                        strongSelf.boxProgressView.isHidden = true
-                        ShowAlert.type(.invalidURL, at: strongSelf, message: alertTextForUser)
-                        strongSelf.referenceTextField.text = nil
+                        self.boxProgressView.isHidden = true
+                        ShowAlert.type(.invalidURL, at: self, message: alertTextForUser)
+                        self.referenceTextField.text = nil
 
                     case .thereIsNoAnyVideo:
-                        ShowAlert.type(.thereIsNoAnyVideo, at: strongSelf, message: "There is no any video")
-                        strongSelf.referenceTextField.text = nil
+                        ShowAlert.type(.thereIsNoAnyVideo, at: self, message: "There is no any video")
+                        self.referenceTextField.text = nil
                     }
                 }
             }
@@ -220,7 +229,7 @@ final class FirstVC: UIViewController {
                 viewModel.state = .badURL(alertText: "Invalid YouTube URL")
                 return
             }
-            viewModel.downloadVideo(at: videoID, and: url)
+            viewModel.downloadAndSaveVideo(at: videoID, and: url)
         }
     }
 

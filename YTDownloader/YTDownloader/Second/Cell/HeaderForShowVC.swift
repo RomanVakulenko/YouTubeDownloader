@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-final class HeaderForSecondVC: UICollectionReusableView {
+final class HeaderForShowVC: UICollectionReusableView {
 
     // MARK: - Private properties
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "You Down"
+        label.text = "YouTubeDownloader"
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 19)
         label.textAlignment = .center
         label.textColor = .black
@@ -32,7 +32,8 @@ final class HeaderForSecondVC: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - Private methods
     private func layout() {
         NSLayoutConstraint.activate([
                 titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
