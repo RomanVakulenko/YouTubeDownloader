@@ -84,6 +84,21 @@ extension DownloadViewModel: DownloadProtocol {
                 default: print("зашел в дефолтный кейс fManagerА")
                 }
             }
+        } catch let error as URLError {
+            if error.networkUnavailableReason == .cellular {
+                self.state = .badURL(alertText: "Сотовая сеть отключена")
+            } else if let reason = error.networkUnavailableReason {
+                self.state = .badURL(alertText: "Сеть недоступна: \(reason)")
+            }
+            switch error.code {
+            case .badURL:
+                self.state = .badURL(alertText: "Некорректный URL")
+            case .notConnectedToInternet:
+                self.state = .badURL(alertText: "Нет подключения к интернету")
+            default:
+                print("Неизвестная ошибка типа URLError")
+                self.state = .badURL(alertText: "Некорректный URL")
+            }
         } catch {
             switch error {
             case NetworkServiceErrors.networkRouterErrors(error: .fetchingXCDVideoError):
